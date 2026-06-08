@@ -386,6 +386,47 @@
       .wa-float { bottom: 20px; right: 20px; }
     }
 
+    /* ── Referencias ── */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .ref-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color .2s, transform .2s;
+    }
+    .ref-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .ref-card.featured { border-color: var(--accent2); }
+    .ref-quote {
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      flex: 1;
+      position: relative;
+    }
+    .ref-quote::before {
+      content: '\201C';
+      font-size: 48px;
+      line-height: 0;
+      color: var(--accent);
+      opacity: .35;
+      position: absolute;
+      top: 16px;
+      left: -4px;
+    }
+    .ref-quote p { padding-left: 18px; }
+    .ref-author { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .ref-name { font-weight: 700; font-size: 14px; color: var(--text); }
+    .ref-role { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+    .ref-rel { font-size: 11.5px; color: var(--accent2); font-family: var(--mono); margin-top: 2px; }
+
     /* ── Fade in ── */
     .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
     .fade-in.visible { opacity: 1; transform: none; }
@@ -413,6 +454,7 @@
       <li><a href="#projects">Proyectos</a></li>
       <li><a href="#feelthedata">Feel The Data</a></li>
       <li><a href="#content">Artículos</a></li>
+      <li><a href="#referencias">Referencias</a></li>
       <li><a href="#contact" class="nav-cta">Contacto</a></li>
     </ul>
   </div>
@@ -1188,6 +1230,110 @@
         </a>
 
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Referencias ── -->
+<section id="referencias">
+  <div class="container">
+    <div class="fade-in" style="margin-bottom: 56px;">
+      <p class="section-label">Testimonios</p>
+      <h2 class="section-title">Lo que dice la gente</h2>
+      <p class="section-desc">Referencias de líderes y colegas con quienes colaboré en Allus, Konecta, Telefónica Hispam y Feel The Data.</p>
+    </div>
+    <div class="ref-grid">
+
+      <div class="ref-card featured fade-in">
+        <div class="ref-quote"><p>Tuve el privilegio de trabajar con Gabriel por más de seis años y su impacto en el ámbito de Atención al Cliente y Planificación es innegable. Su expertise en WFM y su enfoque estratégico han sido clave para optimizar la operación y mejorar la experiencia del cliente. Fue un actor fundamental en la consolidación del modelo regional de atención en HISPAM. Más allá de su conocimiento técnico, Gabriel es un profesional confiable, mesurado y un verdadero jugador de equipo. Un líder con visión y ejecución impecable.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Mauricio González Castelazo Kleimann</span>
+          <span class="ref-role">Partner & Managing Director — AI, SaaS & Digital Transformation · Latin America</span>
+          <span class="ref-rel">Supervisó directamente a Gabriel · Marzo 2025</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Gabriel es un gran profesional y mucho mejor persona. Tiene habilidades que le permiten sacar adelante los indicadores de la operación y lograr una excelencia operativa. Lo que más resalto son sus habilidades para gestionar con su equipo: demuestra un gran liderazgo que no solo se ve reflejado en su equipo sino que es un referente para otros. Aprendí mucho de Gabriel en mi paso por Telefónica.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Michael Campbell Parodi</span>
+          <span class="ref-role">Project Executive Perú</span>
+          <span class="ref-rel">Mismo equipo · Telefónica · Marzo 2025</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Conozco a Gabriel desde hace años y siempre me ha impresionado su capacidad de liderazgo. No solo gestiona personas y procesos, sino que los transforma, creando estructuras más eficientes y equipos más fuertes. Su habilidad para mejorar lo que ya existe y llevar proyectos a otro nivel es lo que realmente lo diferencia. Trabajar con él es ver en acción una gestión estratégica con impacto real y duradero.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Felipe Diniz de Brito</span>
+          <span class="ref-role">Head of Seamless Experience</span>
+          <span class="ref-rel">Mismo equipo · Febrero 2025</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>En todas las instancias donde compartimos siempre me sorprendió la amplia capacidad de análisis y la visión holística junto con los impactos que tienen distintas variables en el negocio. Es un excelente profesional con una amplia capacidad de generar equipos potentes de trabajo sustentados en la credibilidad de su trabajo y gran habilidad blanda para relacionarse con la gente. Contar con su profesionalismo en cualquier empresa es una ganancia segura.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Ariel Roberto Perez Cohen</span>
+          <span class="ref-role">Consultor Senior — WFM</span>
+          <span class="ref-rel">Distintas empresas · Febrero 2021</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Gabriel siempre ha demostrado un liderazgo innato, no sólo con su equipo sino con los demás compañeros. Gran persona y profesional, super analítico, sencillo, empático y con pensamiento fuera de la caja, brindando soluciones sencillas y oportunas. Me guió y orientó con su gran experiencia en atención al cliente en el Contact Center.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Jorge Zevallos</span>
+          <span class="ref-role">Jefe Comercial — Gestión de calidad en canales de atención</span>
+          <span class="ref-rel">Cargo superior · Agosto 2020</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>He trabajado con Gabriel mucho tiempo y lo considero un gran profesional, con tremendas habilidades hard, conocedor de muchos temas y por sobre todo un entusiasta del aprendizaje, permanentemente está intentando superarse. Además cuenta con un set de soft skills que lo hacen un combo perfecto para cualquier puesto gerencial.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Diego Malat</span>
+          <span class="ref-role">Sr. Consultant · COPC® Certified Leader · CX & EX Consultant</span>
+          <span class="ref-rel">Mismo equipo · Mayo 2020</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Tuve el privilegio de trabajar con Gabriel cuando era el Gerente a cargo de WFM en Allus Perú. Además de un impecable manejo de los temas técnicos, Gabriel se caracterizó por un excelente trabajo con las personas a su cargo y un enfoque muy claro hacia la generación de valor para el cliente y la empresa. Es una persona en la cual confío al 100% y no dudo en recomendar.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Francisco Grillo Arciniega</span>
+          <span class="ref-role">Leading transformation in customer experience and operational efficiency</span>
+          <span class="ref-rel">Cargo superior · Allus Perú · Mayo 2020</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Tiene el talento de explotar los potenciales de cada uno de sus colaboradores, buscando siempre el crecimiento conjunto con cada persona y la empresa. Fomenta en todo momento al equipo para que esté constantemente enfocado en sus objetivos. Tiene una gran capacidad de resolución de conflictos y una envidiable capacidad para aplicar cada concepto teórico a la práctica.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Mariano Samamé Bernardi</span>
+          <span class="ref-role">Transforming CX through AI & Cloud Solutions · Telco</span>
+          <span class="ref-rel">Mismo equipo · Abril 2011</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Gabriel es un gran orquestador de recursos, procesos y tiempos. Posee aspectos analíticos y de practicidad que lo convierten en un recurso valioso para cualquier área. Trabajé con él en un proyecto interdisciplinario, y lo considero un nexo importante gracias a su capacidad de expresarse adecuadamente ante cada interlocutor según su perfil.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Diego Martín Raspanti Arancibia</span>
+          <span class="ref-role">PMP · CRM · AI Automation · Omnichannel Strategy</span>
+          <span class="ref-rel">Proyecto interdisciplinario · Diciembre 2010</span>
+        </div>
+      </div>
+
+      <div class="ref-card fade-in">
+        <div class="ref-quote"><p>Es exigente, dedicado a su trabajo, orientado a los resultados, responsable por el proyecto y cada detalle; procurando el desarrollo de sus colaboradores en todo momento. Su gestión se orienta a la efectividad a través de la planificación, la organización y el aprendizaje. Es una persona que busca constantemente mejorar su desempeño.</p></div>
+        <div class="ref-author">
+          <span class="ref-name">Natalia Andrea Agüero</span>
+          <span class="ref-role">Lic. en RRHH · Coach · MBA — Gestión comercial y formación de equipos</span>
+          <span class="ref-rel">Área de Desarrollo de RRHH · Diciembre 2010</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
