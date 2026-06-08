@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estamos analizando mal: el problema con los promedios — Gabriel Pizarro García</title>
+  <meta name="description" content="Una mano en el horno y la otra en el freezer, y el promedio dice que estamos bien. Por qué el uso simplista del promedio destruye decisiones operativas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0e1a;
+      --bg2:         #0f1525;
+      --bg3:         #141c30;
+      --border:      #1e2d4a;
+      --border2:     #253550;
+      --accent:      #2563eb;
+      --accent2:     #3b82f6;
+      --accent-glow: rgba(37,99,235,0.18);
+      --green:       #10b981;
+      --amber:       #f59e0b;
+      --red:         #ef4444;
+      --text:        #e8edf7;
+      --text2:       #94a3b8;
+      --text3:       #64748b;
+      --mono:        'JetBrains Mono', monospace;
+      --sans:        'Inter', sans-serif;
+      --serif:       'Lora', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,14,26,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { max-width: 760px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-back { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-back:hover { color: var(--accent2); }
+    .nav-logo { font-weight: 700; font-size: 14px; color: var(--text3); }
+    .nav-logo span { color: var(--accent2); }
+
+    .article-wrap { max-width: 760px; margin: 0 auto; padding: 100px 24px 80px; }
+
+    .article-meta-top { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; align-items: center; }
+    .meta-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+    .tag-data  { color: var(--accent2); background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); }
+    .tag-ops   { color: var(--green);   background: rgba(16,185,129,0.10); border: 1px solid rgba(16,185,129,0.20); }
+    .tag-warn  { color: var(--amber);   background: rgba(245,158,11,0.10); border: 1px solid rgba(245,158,11,0.20); }
+    .meta-date { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+
+    .article-title { font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 18px; }
+    .article-title .highlight { color: var(--amber); }
+
+    .article-subtitle { font-size: 1.15rem; color: var(--text2); line-height: 1.6; margin-bottom: 32px; }
+
+    .article-author { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 48px; }
+    .author-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #fff; }
+    .author-name { font-size: 14px; font-weight: 700; }
+    .author-role { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .author-links { margin-left: auto; display: flex; gap: 12px; }
+    .author-links a { font-size: 12px; color: var(--accent2); text-decoration: none; }
+    .author-links a:hover { text-decoration: underline; }
+
+    .article-body { font-size: 1.05rem; line-height: 1.85; color: var(--text2); }
+    .article-body h2 { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .article-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 32px 0 12px; }
+    .article-body p { margin-bottom: 20px; }
+    .article-body strong { color: var(--text); font-weight: 600; }
+
+    .article-body blockquote {
+      border-left: 3px solid var(--amber);
+      padding: 4px 0 4px 20px; margin: 28px 0;
+      font-family: var(--serif); font-size: 1.15rem;
+      color: var(--text); font-style: italic; line-height: 1.7;
+    }
+
+    .callout { background: var(--bg2); border: 1px solid var(--border2); border-left: 3px solid var(--green); border-radius: 8px; padding: 18px 20px; margin: 28px 0; }
+    .callout-label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .callout p { margin-bottom: 0; font-size: 14px; }
+    .callout .callout-label { color: var(--green); }
+    .callout-amber { border-left-color: var(--amber); }
+    .callout-amber .callout-label { color: var(--amber); }
+    .callout-red { border-left-color: var(--red); }
+    .callout-red .callout-label { color: var(--red); }
+    .callout-blue { border-left-color: var(--accent2); }
+    .callout-blue .callout-label { color: var(--accent2); }
+
+    /* ── Visualizaciones de datos ── */
+    .viz-wrap { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 28px 24px; margin: 32px 0; }
+    .viz-title { font-family: var(--mono); font-size: 11px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+
+    /* Distribución de barras */
+    .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; margin-bottom: 10px; }
+    .bar { flex: 1; border-radius: 3px 3px 0 0; position: relative; transition: opacity .2s; }
+    .bar-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-align: center; margin-top: 6px; }
+    .bar-axis { display: flex; gap: 6px; border-top: 1px solid var(--border2); padding-top: 4px; }
+    .bar-axis .bar-label { flex: 1; }
+
+    .avg-line {
+      display: flex; align-items: center; gap: 10px; margin-top: 14px;
+      font-size: 12px; color: var(--text3); font-family: var(--mono);
+    }
+    .avg-line::before { content: ''; display: block; width: 32px; height: 2px; background: var(--amber); flex-shrink: 0; }
+
+    /* Scatter / distribución bimodal */
+    .dots-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+
+    /* Ejemplo NPS */
+    .nps-example { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+    .nps-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+    .nps-card-label { font-size: 10px; font-family: var(--mono); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .nps-card-label.bad  { color: var(--red); }
+    .nps-card-label.good { color: var(--green); }
+    .nps-score { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .nps-score.same { color: var(--amber); }
+    .nps-dist { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .nps-dist span { font-family: var(--mono); font-weight: 600; }
+    .nps-dist .bad-val { color: var(--red); }
+    .nps-dist .good-val { color: var(--green); }
+
+    /* Tabla de malos vs buenos usos */
+    .contrast-table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 13.5px; }
+    .contrast-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); background: var(--bg3); border-bottom: 1px solid var(--border2); }
+    .contrast-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+    .contrast-table tr:last-child td { border-bottom: none; }
+    .col-bad  { color: var(--text3) !important; font-style: italic; }
+    .col-good { color: var(--text) !important; }
+
+    .checklist { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .checklist li { display: flex; gap: 12px; font-size: 14px; color: var(--text2); }
+    .checklist li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+    .article-body ul, .article-body ol { padding-left: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .article-body li { font-size: 1rem; }
+    .article-body li::marker { color: var(--accent2); }
+
+    .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 48px 0 32px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .article-tag { font-family: var(--mono); font-size: 11px; color: var(--text3); background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; }
+    .article-source-note { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-size: 13px; color: var(--text3); margin-bottom: 40px; display: flex; gap: 12px; align-items: flex-start; }
+    .article-source-note::before { content: '💬'; flex-shrink: 0; }
+
+    .back-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all .2s; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-secondary { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+    .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-1px); }
+
+    .progress-bar { position: fixed; top: 56px; left: 0; right: 0; height: 2px; background: var(--border); z-index: 99; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--amber), var(--accent2)); transition: width .1s; }
+
+    @media (max-width: 580px) {
+      .nps-example { grid-template-columns: 1fr; }
+      .article-author { flex-wrap: wrap; }
+      .author-links { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html#content" class="nav-back">← Volver al inicio</a>
+    <div class="nav-logo">GP<span>.</span></div>
+  </div>
+</nav>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<article class="article-wrap">
+
+  <div class="article-meta-top">
+    <span class="meta-tag tag-data">Datos & Analítica</span>
+    <span class="meta-tag tag-ops">Operaciones</span>
+    <span class="meta-tag tag-warn">Decisiones</span>
+    <span class="meta-date">LinkedIn · 2024</span>
+  </div>
+
+  <h1 class="article-title">
+    Estamos analizando mal:<br/>
+    <span class="highlight">el problema con los promedios</span>
+  </h1>
+
+  <p class="article-subtitle">
+    Una mano en el horno y la otra en el freezer. El promedio dice 20°C y estamos cómodos. Así se construyen decisiones operativas todos los días — sobre una base que parece sólida y en el fondo está completamente desenfocada.
+  </p>
+
+  <div class="article-author">
+    <div class="author-avatar">GP</div>
+    <div>
+      <div class="author-name">Gabriel Pizarro García</div>
+      <div class="author-role">Gerente de Atención al Cliente · Integratel Perú (Movistar) · Fundador Feel The Data</div>
+    </div>
+    <div class="author-links">
+      <a href="https://linkedin.com/in/gabrielpizarro" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html">Web</a>
+    </div>
+  </div>
+
+  <div class="article-body">
+
+    <p>
+      Tengo un TOC con los promedios. No porque la media sea un concepto incorrecto — es una herramienta matemática perfectamente válida. Mi problema es con el uso simplista del promedio como si fuera representativo de toda la realidad. Spoiler: no lo es.
+    </p>
+
+    <p>
+      Lo veo todos los días en la práctica: reportes que dicen "en promedio estamos bien", presentaciones que muestran un KPI agregado que oculta exactamente lo que más importa, decisiones de presupuesto construidas sobre números que no le hacen justicia a lo que realmente está pasando.
+    </p>
+
+    <blockquote>
+      "Una mano está en el horno y la otra en el freezer, y estamos felices."
+    </blockquote>
+
+    <p>
+      El problema no es el promedio en sí. Es no hacerle el doble clic. Es no preguntarse qué esconde ese número antes de actuar sobre él.
+    </p>
+
+    <h2>Por qué el promedio miente — o mejor dicho, simplifica demasiado</h2>
+
+    <p>
+      El promedio colapsa información. Toma una distribución entera — con su forma, sus extremos, su concentración, sus valores atípicos — y la reduce a un solo número. En contextos simples y datos distribuidos normalmente, eso puede funcionar bien. En la mayoría de los contextos operativos reales, es una simplificación peligrosa.
+    </p>
+
+    <p>
+      Pensemos en el ejemplo más clásico del contact center: el <strong>Tiempo Medio de Operación (TMO)</strong>.
+    </p>
+
+    <div class="viz-wrap">
+      <div class="viz-title">Distribución de TMO — dos operaciones con el mismo promedio</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+        <div>
+          <div style="font-size: 11px; color: var(--green); font-family: var(--mono); font-weight: 600; margin-bottom: 12px; letter-spacing: 0.06em;">OPERACIÓN A — Estable</div>
+          <div class="bar-chart">
+            <div><div class="bar" style="height:15%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:35%; background: var(--accent); opacity:.5;"></div></div>
+            <div><div class="bar" style="height:80%; background: var(--accent);"></div></div>
+            <div><div class="bar" style="height:90%; background: var(--accent);"></div></div>
+            <div><div class="bar" style="height:85%; background: var(--accent);"></div></div>
+            <div><div class="bar" style="height:70%; background: var(--accent); opacity:.8;"></div></div>
+            <div><div class="bar" style="height:40%; background: var(--accent); opacity:.5;"></div></div>
+            <div><div class="bar" style="height:18%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:8%;  background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+          </div>
+          <div class="avg-line">Promedio: 6 min</div>
+          <div style="font-size: 11.5px; color: var(--text2); margin-top: 8px; line-height: 1.5;">
+            Distribución concentrada. El promedio representa bien al grueso de los agentes.
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 11px; color: var(--amber); font-family: var(--mono); font-weight: 600; margin-bottom: 12px; letter-spacing: 0.06em;">OPERACIÓN B — Bimodal</div>
+          <div class="bar-chart">
+            <div><div class="bar" style="height:10%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:75%; background: var(--green); opacity:.8;"></div></div>
+            <div><div class="bar" style="height:85%; background: var(--green);"></div></div>
+            <div><div class="bar" style="height:20%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:15%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:18%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+            <div><div class="bar" style="height:70%; background: var(--red); opacity:.8;"></div></div>
+            <div><div class="bar" style="height:80%; background: var(--red);"></div></div>
+            <div><div class="bar" style="height:12%; background: var(--bg2); border: 1px solid var(--border2);"></div></div>
+          </div>
+          <div class="avg-line">Promedio: 6 min</div>
+          <div style="font-size: 11.5px; color: var(--text2); margin-top: 8px; line-height: 1.5;">
+            Distribución bimodal: un grupo eficiente <span style="color:var(--green);">■</span> y uno con problemas graves <span style="color:var(--red);">■</span>. El promedio no representa a nadie.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Dos operaciones con TMO promedio idéntico. Una funcionando bien. La otra con un grupo de agentes con tiempos dos o tres veces más altos que el resto, señal casi segura de un problema de capacitación, de proceso o de tipos de caso que no están siendo gestionados correctamente.
+    </p>
+
+    <p>
+      Si solo mirás el promedio, las dos operaciones parecen iguales. Si mirás la distribución, son completamente distintas.
+    </p>
+
+    <h2>El NPS promedio: el engaño más común</h2>
+
+    <p>
+      Otro ejemplo que aparece constantemente: el <strong>Net Promoter Score promedio</strong>. Dos operaciones pueden tener exactamente el mismo NPS y estar en situaciones diametralmente opuestas.
+    </p>
+
+    <div class="nps-example">
+      <div class="nps-card">
+        <div class="nps-card-label bad">⚠ Escenario problemático</div>
+        <div class="nps-score same">NPS: +30</div>
+        <div class="nps-dist">
+          Promotores: <span class="good-val">55%</span><br/>
+          Pasivos: <span style="color: var(--text3);">10%</span><br/>
+          Detractores: <span class="bad-val">35%</span><br/>
+          <br/>
+          <span style="font-size: 11px; color: var(--text3);">Alta polarización. Un tercio de los clientes activamente disconformes. Riesgo de churn alto.</span>
+        </div>
+      </div>
+      <div class="nps-card">
+        <div class="nps-card-label good">✓ Escenario saludable</div>
+        <div class="nps-score same">NPS: +30</div>
+        <div class="nps-dist">
+          Promotores: <span class="good-val">50%</span><br/>
+          Pasivos: <span style="color: var(--text3);">30%</span><br/>
+          Detractores: <span class="bad-val">20%</span><br/>
+          <br/>
+          <span style="font-size: 11px; color: var(--text3);">Distribución equilibrada. Potencial alto de convertir pasivos. Base más estable para retención.</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      El número final es el mismo. Las acciones que corresponden son completamente distintas. En el primer caso, hay un problema urgente de detractores que resolver. En el segundo, la palanca está en convertir pasivos. Si tomás decisiones solo sobre el NPS agregado, estás invirtiendo recursos en el lugar equivocado.
+    </p>
+
+    <h2>¿Por qué seguimos usando promedios simples?</h2>
+
+    <p>
+      La pregunta honesta es: si esto es tan evidente, ¿por qué sigue pasando? Creo que hay dos razones que conviven.
+    </p>
+
+    <h3>1. Falta de cultura estadística</h3>
+
+    <p>
+      El análisis de distribuciones, la detección de outliers, la lectura de percentiles — son herramientas que no se enseñan en la mayoría de los programas de gestión. Un gerente promedio (paradójicamente) sabe interpretar un promedio, pero no sabe leer un box plot o identificar una distribución bimodal. No es ignorancia — es una brecha de formación muy común.
+    </p>
+
+    <h3>2. Ahorro inconsciente de energía cognitiva</h3>
+
+    <p>
+      La segunda razón es más incómoda: <strong>un número simple es más fácil de comunicar, defender y recordar que una distribución</strong>. En reuniones de directorio, en presentaciones de resultados, en reportes ejecutivos — hay una presión implícita hacia la síntesis. Y la síntesis mal aplicada colapsa en el promedio.
+    </p>
+
+    <blockquote>
+      ¿Es falta de conocimiento estadístico? ¿O es una forma inconsciente de ahorrar energía al explicar problemas complejos? Sea como sea, el resultado es el mismo: decisiones que parecen precisas, pero que en el fondo están desenfocadas.
+    </blockquote>
+
+    <h2>Las herramientas que el promedio esconde</h2>
+
+    <p>
+      No se trata de abandonar el promedio — se trata de complementarlo con el análisis que le da contexto. Estas son las preguntas y métricas que deberían acompañar cualquier KPI operativo antes de tomar una decisión sobre él:
+    </p>
+
+    <table class="contrast-table">
+      <thead>
+        <tr>
+          <th>En lugar de solo mirar…</th>
+          <th>Preguntate también…</th>
+          <th>Herramienta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TMO promedio</td>
+          <td class="col-good">¿Cómo es la distribución por decil? ¿Hay agentes en el percentil 90 con el doble del promedio?</td>
+          <td style="font-family: var(--mono); font-size: 12px; color: var(--accent2);">Percentiles · Box plot</td>
+        </tr>
+        <tr>
+          <td>NPS promedio</td>
+          <td class="col-good">¿Cuántos promotores, pasivos y detractores hay realmente? ¿Cambia por segmento de cliente o canal?</td>
+          <td style="font-family: var(--mono); font-size: 12px; color: var(--accent2);">Distribución · Segmentación</td>
+        </tr>
+        <tr>
+          <td>Nivel de servicio global</td>
+          <td class="col-good">¿Hay intervalos del día o días de la semana donde el SL colapsa, que el promedio está compensando?</td>
+          <td style="font-family: var(--mono); font-size: 12px; color: var(--accent2);">Granularidad temporal</td>
+        </tr>
+        <tr>
+          <td>Tasa de error promedio</td>
+          <td class="col-good">¿La variabilidad es alta? ¿El proceso está bajo control estadístico o hay causas especiales?</td>
+          <td style="font-family: var(--mono); font-size: 12px; color: var(--accent2);">Cpk · Gráficas de control</td>
+        </tr>
+        <tr>
+          <td>Costo por contacto promedio</td>
+          <td class="col-good">¿Hay canales o tipos de caso que distorsionan la media? ¿El promedio está siendo jalado por outliers?</td>
+          <td style="font-family: var(--mono); font-size: 12px; color: var(--accent2);">Mediana · IQR · Segmentación</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Cpk y el control estadístico de procesos: el nivel siguiente</h2>
+
+    <p>
+      Hay una herramienta que viene de la manufactura y que es prácticamente desconocida en la gestión de contact centers: el <strong>índice Cpk</strong> (Process Capability Index).
+    </p>
+
+    <p>
+      El Cpk no solo te dice cuál es el promedio de un proceso — te dice si ese proceso es <strong>capaz</strong> de cumplir consistentemente con los límites de tolerancia que definiste. Un proceso puede tener un promedio dentro del objetivo y aun así tener un Cpk bajo, lo que significa que una proporción significativa de sus resultados está fuera del rango aceptable.
+    </p>
+
+    <div class="callout callout-blue">
+      <div class="callout-label">Aplicación en contact center</div>
+      <p>Si definís que el TMO aceptable es entre 4 y 8 minutos, el Cpk te dice qué porcentaje de las interacciones está dentro de ese rango — no solo cuál es el promedio. Un Cpk mayor a 1.33 indica un proceso capaz y estable. Por debajo de 1.0, hay un problema sistémico aunque el promedio parezca razonable.</p>
+    </div>
+
+    <p>
+      En Integratel hemos aplicado este análisis a procesos operativos de contact center con resultados que cambian completamente la lectura de los datos — y por lo tanto, las decisiones de mejora.
+    </p>
+
+    <h2>El doble clic como hábito directivo</h2>
+
+    <p>
+      La propuesta concreta es simple: antes de actuar sobre cualquier KPI, hacerle el <strong>doble clic</strong>.
+    </p>
+
+    <ul class="checklist">
+      <li>¿Este número es una media, una mediana, un percentil? ¿Importa la diferencia en este contexto?</li>
+      <li>¿Cómo es la distribución detrás de este número? ¿Es simétrica, sesgada, bimodal?</li>
+      <li>¿Hay segmentos, canales o momentos temporales donde este KPI se comporta diferente?</li>
+      <li>¿Hay outliers que están influyendo desproporcionalmente en el agregado?</li>
+      <li>¿Cuál es la variabilidad del proceso, no solo su centro?</li>
+    </ul>
+
+    <p>
+      Ninguna de estas preguntas requiere un doctorado en estadística. Requieren el hábito de no conformarse con el primer número que aparece en el reporte.
+    </p>
+
+    <div class="callout callout-amber">
+      <div class="callout-label">El costo real de no hacer el doble clic</div>
+      <p>Las decisiones construidas sobre promedios simplistas no son decisiones incorrectas por casualidad — son incorrectas de forma sistemática. Los planes de acción apuntan al centro cuando el problema está en los extremos. Los presupuestos se asignan al canal equivocado. Las iniciativas de mejora se dirigen a quien menos las necesita.</p>
+    </div>
+
+    <h2>Conclusión: gestionar experiencias exige entender datos correctamente</h2>
+
+    <p>
+      Si gestionás experiencias — de clientes, de equipos, de operaciones — entender correctamente los datos no es opcional. No es un lujo técnico reservado para analistas. Es la diferencia entre tomar decisiones sobre la realidad o sobre una representación conveniente de ella.
+    </p>
+
+    <p>
+      El promedio no es el enemigo. La falta de curiosidad sobre lo que el promedio esconde, sí lo es.
+    </p>
+
+    <blockquote>
+      Porque si vamos a gestionar experiencias — de clientes, de equipos o de negocio — entender correctamente los datos no es opcional.
+    </blockquote>
+
+    <p>
+      La próxima vez que alguien te muestre un KPI en una reunión, hacé la pregunta incómoda: ¿Y cómo es la distribución? No para complicar la conversación — sino para asegurarte de que la decisión que van a tomar está parada sobre tierra firme.
+    </p>
+
+  </div>
+
+  <div class="article-tags">
+    <span class="article-tag">Analítica operativa</span>
+    <span class="article-tag">Promedios</span>
+    <span class="article-tag">KPIs</span>
+    <span class="article-tag">Cpk</span>
+    <span class="article-tag">Distribuciones</span>
+    <span class="article-tag">Contact center</span>
+    <span class="article-tag">Decisiones basadas en datos</span>
+    <span class="article-tag">NPS</span>
+    <span class="article-tag">TMO</span>
+  </div>
+
+  <div class="article-source-note">
+    Este artículo expande una reflexión publicada originalmente en <a href="https://www.linkedin.com/posts/gabrielpizarro_estamos-analizando-mal-y-yo-tengo-un-toc-activity-7359241639086723072-C6wo" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: none;">LinkedIn</a>. ¿Te pasó tomar decisiones sobre promedios que resultaron engañosos? Escribime — es un tema que vale la pena conversar.
+  </div>
+
+  <div class="back-cta">
+    <a href="../index.html" class="btn btn-primary">← Volver al inicio</a>
+    <a href="https://www.linkedin.com/posts/gabrielpizarro_estamos-analizando-mal-y-yo-tengo-un-toc-activity-7359241639086723072-C6wo" target="_blank" rel="noopener" class="btn btn-secondary">Ver post original en LinkedIn</a>
+    <a href="soporte-como-senal-y-brujula.html" class="btn btn-secondary">Otro artículo →</a>
+  </div>
+
+</article>
+
+<script>
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    progress.style.width = (window.scrollY / total * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
