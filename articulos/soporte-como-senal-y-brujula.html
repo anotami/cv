@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soporte no es solo ejecución. Es señal y brújula — Gabriel Pizarro García</title>
+  <meta name="description" content="Para entender cómo funciona realmente una empresa, hay que mirar dónde el cliente se encuentra con la operación. El soporte al cliente como fuente estratégica de señales." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0e1a;
+      --bg2:         #0f1525;
+      --bg3:         #141c30;
+      --border:      #1e2d4a;
+      --border2:     #253550;
+      --accent:      #2563eb;
+      --accent2:     #3b82f6;
+      --accent-glow: rgba(37,99,235,0.18);
+      --green:       #10b981;
+      --amber:       #f59e0b;
+      --text:        #e8edf7;
+      --text2:       #94a3b8;
+      --text3:       #64748b;
+      --mono:        'JetBrains Mono', monospace;
+      --sans:        'Inter', sans-serif;
+      --serif:       'Lora', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,14,26,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 760px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .nav-back { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-back:hover { color: var(--accent2); }
+    .nav-logo { font-weight: 700; font-size: 14px; color: var(--text3); }
+    .nav-logo span { color: var(--accent2); }
+
+    .article-wrap { max-width: 760px; margin: 0 auto; padding: 100px 24px 80px; }
+
+    .article-meta-top { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; align-items: center; }
+    .meta-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+    .tag-cx  { color: var(--green);   background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); }
+    .tag-ops { color: var(--accent2); background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); }
+    .tag-str { color: var(--amber);   background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.2); }
+    .meta-date { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+
+    .article-title { font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 18px; }
+    .article-title .highlight { color: var(--green); }
+
+    .article-subtitle { font-size: 1.15rem; color: var(--text2); line-height: 1.6; margin-bottom: 32px; font-weight: 400; }
+
+    .article-author {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 48px;
+    }
+    .author-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #fff; }
+    .author-name { font-size: 14px; font-weight: 700; }
+    .author-role { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .author-links { margin-left: auto; display: flex; gap: 12px; }
+    .author-links a { font-size: 12px; color: var(--accent2); text-decoration: none; }
+    .author-links a:hover { text-decoration: underline; }
+
+    .article-body { font-size: 1.05rem; line-height: 1.85; color: var(--text2); }
+    .article-body h2 { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .article-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 32px 0 12px; }
+    .article-body p { margin-bottom: 20px; }
+    .article-body strong { color: var(--text); font-weight: 600; }
+
+    .article-body blockquote {
+      border-left: 3px solid var(--green);
+      padding: 4px 0 4px 20px; margin: 28px 0;
+      font-family: var(--serif); font-size: 1.15rem;
+      color: var(--text); font-style: italic; line-height: 1.7;
+    }
+
+    .callout { background: var(--bg2); border: 1px solid var(--border2); border-left: 3px solid var(--green); border-radius: 8px; padding: 18px 20px; margin: 28px 0; }
+    .callout-label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .callout p { margin-bottom: 0; font-size: 14px; }
+    .callout-blue { border-left-color: var(--accent2); }
+    .callout-blue .callout-label { color: var(--accent2); }
+    .callout-amber { border-left-color: var(--amber); }
+    .callout-amber .callout-label { color: var(--amber); }
+
+    .signal-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin: 28px 0;
+    }
+    .signal-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 18px 16px;
+    }
+    .signal-card-icon { font-size: 1.2rem; margin-bottom: 8px; }
+    .signal-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+    .signal-card p { font-size: 12.5px; color: var(--text2); line-height: 1.5; margin-bottom: 0; }
+
+    .loop-diagram {
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 28px 24px; margin: 32px 0;
+      font-family: var(--mono); font-size: 12.5px; color: var(--text2);
+      line-height: 2.2; overflow-x: auto;
+    }
+    .loop-diagram .node-g { color: var(--green); font-weight: 700; }
+    .loop-diagram .node-b { color: var(--accent2); font-weight: 700; }
+    .loop-diagram .node-a { color: var(--amber); font-weight: 700; }
+    .loop-diagram .arrow { color: var(--text3); }
+    .loop-diagram .label { color: var(--text3); font-size: 11px; }
+
+    .contrast-table {
+      width: 100%; border-collapse: collapse; margin: 28px 0;
+      font-size: 13.5px;
+    }
+    .contrast-table th {
+      padding: 10px 14px; text-align: left;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--text3); background: var(--bg3); border-bottom: 1px solid var(--border2);
+    }
+    .contrast-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text2); vertical-align: top;
+    }
+    .contrast-table tr:last-child td { border-bottom: none; }
+    .contrast-table .col-bad { color: var(--text3); font-style: italic; }
+    .contrast-table .col-good { color: var(--text); }
+
+    .article-body ul, .article-body ol { padding-left: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .article-body li { font-size: 1rem; }
+    .article-body li::marker { color: var(--green); }
+
+    .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 48px 0 32px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .article-tag { font-family: var(--mono); font-size: 11px; color: var(--text3); background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; }
+
+    .article-source-note { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-size: 13px; color: var(--text3); margin-bottom: 40px; display: flex; gap: 12px; align-items: flex-start; }
+    .article-source-note::before { content: '💬'; flex-shrink: 0; }
+
+    .back-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all .2s; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-secondary { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+    .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-1px); }
+
+    .progress-bar { position: fixed; top: 56px; left: 0; right: 0; height: 2px; background: var(--border); z-index: 99; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--accent2)); transition: width .1s; }
+
+    @media (max-width: 580px) {
+      .signal-grid { grid-template-columns: 1fr; }
+      .article-author { flex-wrap: wrap; }
+      .author-links { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html#content" class="nav-back">← Volver al inicio</a>
+    <div class="nav-logo">GP<span>.</span></div>
+  </div>
+</nav>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<article class="article-wrap">
+
+  <div class="article-meta-top">
+    <span class="meta-tag tag-cx">CX</span>
+    <span class="meta-tag tag-ops">Operaciones</span>
+    <span class="meta-tag tag-str">Estrategia</span>
+    <span class="meta-date">Hace ~2 meses · LinkedIn</span>
+  </div>
+
+  <h1 class="article-title">
+    Soporte no es solo ejecución.<br/>
+    <span class="highlight">Es señal y brújula.</span>
+  </h1>
+
+  <p class="article-subtitle">
+    Para entender cómo funciona realmente una empresa, no alcanza con mirar los reportes. Hay que ir al lugar donde el cliente se encuentra con la operación — y escuchar lo que ese encuentro dice.
+  </p>
+
+  <div class="article-author">
+    <div class="author-avatar">GP</div>
+    <div>
+      <div class="author-name">Gabriel Pizarro García</div>
+      <div class="author-role">Gerente de Atención al Cliente · Integratel Perú (Movistar) · Fundador Feel The Data</div>
+    </div>
+    <div class="author-links">
+      <a href="https://linkedin.com/in/gabrielpizarro" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="../index.html">Web</a>
+    </div>
+  </div>
+
+  <div class="article-body">
+
+    <p>
+      Hay una paradoja frecuente en las organizaciones de escala: cuanto más sofisticado es el sistema de métricas, más fácil es perder de vista lo que realmente está pasando. Los dashboards se multiplican, los reportes se refinan, los indicadores se desagregan en sub-indicadores — y aun así, el equipo directivo puede estar operando con una imagen desenfocada de la realidad del cliente.
+    </p>
+
+    <p>
+      El CAC, el LTV, el NPS, el EBITDA — todos son indicadores válidos. Pero tienen algo en común: son <strong>retrospectivos</strong>. Te dicen lo que ya pasó. Lo que no te dicen es dónde está ocurriendo la fricción hoy, qué decisión tomada la semana pasada está generando ruido en la operación, o qué proceso que nadie revisó desde hace seis meses se convirtió silenciosamente en un problema.
+    </p>
+
+    <p>
+      Esa información vive en un solo lugar: <strong>el contacto entre el cliente y la empresa</strong>.
+    </p>
+
+    <h2>El lugar donde las decisiones se vuelven reales</h2>
+
+    <p>
+      Cada vez que un cliente llama, escribe o interactúa con el equipo de soporte, está dejando una señal. No necesariamente explícita — a veces es una pregunta que se repite, a veces es un reclamo que no debería existir, a veces es un proceso que falla en el mismo punto para clientes distintos.
+    </p>
+
+    <p>
+      Soporte es el lugar donde las decisiones de producto, marketing y operaciones se materializan en la experiencia del cliente. Es donde se descubre si un cambio de tarifas generó confusión, si un proceso nuevo está siendo incomprendido, si una promesa de venta no se está cumpliendo en la post-venta.
+    </p>
+
+    <blockquote>
+      Ahí, donde el cliente se toca con la empresa — ¿cómo van las cosas cuando algo falla?
+    </blockquote>
+
+    <p>
+      Es una pregunta simple. Pero pocas organizaciones tienen un sistema real para responderla. No porque les falte tecnología, sino porque no convirtieron esa señal en un input reconocido dentro del proceso de decisión.
+    </p>
+
+    <h2>Las cuatro señales que soporte concentra</h2>
+
+    <p>
+      En operaciones de atención al cliente a escala, el volumen de interacciones genera una masa de información que, bien procesada, es de un valor estratégico enorme. No como dato aislado, sino como <strong>patrón</strong>.
+    </p>
+
+    <div class="signal-grid">
+      <div class="signal-card">
+        <div class="signal-card-icon">🔥</div>
+        <h4>Puntos de fricción</h4>
+        <p>Qué procesos, productos o comunicaciones generan contacto evitable. El cliente que llama "sin necesidad" está señalando un problema de diseño.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-card-icon">📡</div>
+        <h4>Fallas de escalamiento</h4>
+        <p>Qué problemas no están llegando a las áreas que deberían resolverlos. Cada caso que vuelve al cliente sin resolución es un loop roto.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-card-icon">⚡</div>
+        <h4>Impacto de decisiones</h4>
+        <p>Qué cambios recientes — de precio, de proceso, de producto — están generando reacción del cliente que nadie anticipó.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-card-icon">📊</div>
+        <h4>Prioridades reales</h4>
+        <p>Qué le importa al cliente en este momento, no en la última encuesta. El volumen y tipo de contacto revela la agenda real del cliente.</p>
+      </div>
+    </div>
+
+    <p>
+      El problema es que esta información no llega sola a la mesa directiva. Requiere ser capturada, procesada y comunicada — y eso requiere un sistema y una disciplina organizacional que pocas empresas construyen de forma deliberada.
+    </p>
+
+    <h2>La disciplina que lo hace funcionar</h2>
+
+    <p>
+      En las organizaciones donde soporte funciona como input estratégico, no como silo operativo, hay tres prácticas que se repiten:
+    </p>
+
+    <h3>1. Incorporar la información a tiempo</h3>
+
+    <p>
+      El valor de una señal de soporte es inversamente proporcional al tiempo que tarda en llegar a quien puede actuar. Un reporte mensual sobre las causas de contacto tiene valor académico. Una alerta diaria sobre un spike de reclamos por un proceso específico puede evitar un problema mayor.
+    </p>
+
+    <div class="callout callout-blue">
+      <div class="callout-label">En la práctica</div>
+      <p>Los sistemas de speech analytics y categorización automática permiten tener visibilidad en tiempo real o near-real-time de las causas de contacto. No es necesario esperar que un analista procese la información manualmente para tomar decisiones.</p>
+    </div>
+
+    <h3>2. Darle peso en la conversación directiva</h3>
+
+    <p>
+      La segunda condición es cultural. La información de soporte tiene que tener un lugar reconocido en las reuniones donde se toman decisiones — no como un informe de cierre, sino como input al comienzo de la discusión.
+    </p>
+
+    <p>
+      El ejecutivo de producto que toma una decisión sabiendo de antemano cuántas interacciones de soporte generó la última versión de su funcionalidad, toma decisiones mejores. No porque sea más inteligente, sino porque tiene más contexto.
+    </p>
+
+    <h3>3. Cerrar el loop</h3>
+
+    <p>
+      El tercer elemento es el más difícil operativamente: <strong>cerrar el loop</strong>. Que la señal que entró por soporte salga como decisión hacia producto, marketing u operaciones — y que esa decisión vuelva a soporte en forma de una reducción del problema original.
+    </p>
+
+    <div class="loop-diagram">
+      <div><span class="node-g">SOPORTE</span> <span class="arrow">──── señal ────→</span> <span class="node-b">ANÁLISIS</span> <span class="arrow">──── insight ────→</span> <span class="node-a">DECISIÓN</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">↓</span></div>
+      <div><span class="node-g">SOPORTE</span> <span class="arrow">←─── reducción ──── </span><span class="node-b">PRODUCTO / OPS</span> <span class="arrow">←── cambio ───</span> <span class="node-a">EJECUCIÓN</span></div>
+      <div>&nbsp;</div>
+      <div><span class="label">&nbsp;&nbsp;Menos contacto evitable · Mejor experiencia · Más contexto para la próxima decisión</span></div>
+    </div>
+
+    <p>
+      Cuando ese loop no cierra, soporte se convierte en un bucket sin fondo: recibe el impacto de cada problema sistémico pero no tiene canal para resolverlos en la raíz. El equipo se desgasta, los costos operativos crecen, y los problemas se repiten.
+    </p>
+
+    <h2>El contraste que se nota</h2>
+
+    <p>
+      La diferencia entre organizaciones que usan soporte como señal estratégica y las que lo tratan como un centro de costo operativo no siempre es obvia desde afuera. Pero se manifiesta en patrones concretos:
+    </p>
+
+    <table class="contrast-table">
+      <thead>
+        <tr>
+          <th>Soporte como silo operativo</th>
+          <th>Soporte como señal estratégica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-bad">Los errores se descubren tarde, cuando ya generaron volumen de contacto</td>
+          <td class="col-good">Los errores se detectan en los primeros síntomas, antes de escalar</td>
+        </tr>
+        <tr>
+          <td class="col-bad">Producto lanza cambios sin considerar el impacto en soporte</td>
+          <td class="col-good">Producto consulta la señal de soporte antes de priorizar</td>
+        </tr>
+        <tr>
+          <td class="col-bad">El NPS baja y nadie entiende exactamente por qué</td>
+          <td class="col-good">El movimiento en métricas tiene explicación operativa inmediata</td>
+        </tr>
+        <tr>
+          <td class="col-bad">La experiencia del cliente es un resultado accidental de las decisiones de negocio</td>
+          <td class="col-good">La experiencia del cliente es un input deliberado en esas decisiones</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Una nota sobre la IA y el factor humano</h2>
+
+    <p>
+      Hay una dimensión de soporte que la automatización y la IA pueden optimizar pero no reemplazar completamente: <strong>la sensación de ser escuchado</strong>.
+    </p>
+
+    <p>
+      Los bots, los flujos automatizados y los sistemas de autoservicio son excelentes para resolver volumen de casos de baja complejidad con alta eficiencia. Pero cuando un cliente tiene un problema real — uno que lo afecta, que generó frustración, que implica una situación particular — la calidad de esa interacción humana sigue siendo un diferenciador.
+    </p>
+
+    <p>
+      Esto no es un argumento en contra de la automatización. Es un argumento para usarla con criterio: automatizar lo que puede automatizarse bien, y reservar la atención humana para donde genuinamente agrega valor. El error es creer que la tecnología resuelve el problema de escucha. No lo resuelve — lo amplifica o lo esconde, dependiendo de cómo se diseñe.
+    </p>
+
+    <div class="callout">
+      <div class="callout-label">El principio de fondo</div>
+      <p>La IA puede transcribir, categorizar y priorizar miles de interacciones. Pero la decisión de qué hacer con esa información — y el compromiso de cerrar el loop — sigue siendo humana y organizacional.</p>
+    </div>
+
+    <h2>Conclusión: la brújula que muchas organizaciones tienen y no usan</h2>
+
+    <p>
+      Soporte al cliente es, en potencia, el sensor más sensible que tiene una organización sobre su realidad operativa. No porque sea más preciso que el análisis financiero, sino porque es <strong>más inmediato y más granular</strong>.
+    </p>
+
+    <p>
+      Las compañías que aprenden a leer esa señal — que incorporan la voz del cliente a las decisiones antes de que los problemas se vuelvan estadística — operan distinto. No porque tengan más recursos o más tecnología, sino porque tienen más contexto en el momento en que más importa.
+    </p>
+
+    <blockquote>
+      Soporte no es solo ejecución. Es señal y brújula. Las compañías que aprenden a usar esa brújula, operan distinto.
+    </blockquote>
+
+    <p>
+      La pregunta no es si tu empresa tiene esa información. La tiene. La pregunta es si la está usando — o si está esperando que el próximo dashboard lo resuelva.
+    </p>
+
+  </div>
+
+  <div class="article-tags">
+    <span class="article-tag">CX</span>
+    <span class="article-tag">Contact center</span>
+    <span class="article-tag">Estrategia operativa</span>
+    <span class="article-tag">NPS</span>
+    <span class="article-tag">Señales de negocio</span>
+    <span class="article-tag">Liderazgo</span>
+    <span class="article-tag">Decisiones</span>
+  </div>
+
+  <div class="article-source-note">
+    Este artículo es una expansión de una reflexión publicada originalmente en <a href="https://www.linkedin.com/posts/gabrielpizarro_si-queres-entender-c%C3%B3mo-est%C3%A1-funcionando-activity-7440551385642844161-vYt8" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: none;">LinkedIn</a>. Si te resonó o tenés experiencias similares en tu organización, escribime — es una conversación que vale la pena tener.
+  </div>
+
+  <div class="back-cta">
+    <a href="../index.html" class="btn btn-primary">← Volver al inicio</a>
+    <a href="https://www.linkedin.com/posts/gabrielpizarro_si-queres-entender-c%C3%B3mo-est%C3%A1-funcionando-activity-7440551385642844161-vYt8" target="_blank" rel="noopener" class="btn btn-secondary">Ver post original en LinkedIn</a>
+    <a href="arquitectura-ia-multiagente.html" class="btn btn-secondary">Otro artículo →</a>
+  </div>
+
+</article>
+
+<script>
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    progress.style.width = (window.scrollY / total * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
