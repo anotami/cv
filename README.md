@@ -49,6 +49,19 @@ Transformo operaciones humanas complejas en **sistemas inteligentes, eficientes 
 
 ---
 
+### Feel The Data
+
+Consultora propia fundada en 2020, especializada en servicios para operaciones de contact center:
+
+- **Capacitaciones** — WFM, métricas, forecast, liderazgo operativo
+- **Auditoría de procesos** — diagnóstico operativo, KPIs, gobernanza de proveedores
+- **Consultoría operativa** — diseño de marcos de gestión, reducción de costos, mejora de CX
+- **IA aplicada** — speech analytics, dashboards automáticos, forecasting predictivo
+
+Industrias: Telecomunicaciones · BPOs · Estudios jurídicos · Clínicas · Constructoras
+
+---
+
 ### Este repositorio
 
 Sitio web personal construido como un único archivo HTML — dark theme ejecutivo, responsive, sin dependencias de build. Diseñado para recruiters ejecutivos y headhunters de C-level.

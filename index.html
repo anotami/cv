@@ -175,8 +175,58 @@
     .timeline-sub-roles li { font-size: 12px; color: var(--text3); display: flex; gap: 8px; }
     .timeline-sub-roles li::before { content: '·'; color: var(--border2); }
 
+    /* ── Feel The Data ── */
+    #feelthedata { background: var(--bg); }
+    .ftd-wrapper {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .ftd-brand {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+    }
+    .ftd-logo {
+      width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 0 24px rgba(16,185,129,0.25);
+    }
+    .ftd-brand-name { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+    .ftd-brand-tagline { font-size: 12px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+    .ftd-desc p { color: var(--text2); margin-bottom: 16px; font-size: 14.5px; }
+    .ftd-desc p strong { color: var(--text); }
+    .ftd-since {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 8px;
+      font-size: 12px; color: var(--green); font-family: var(--mono);
+    }
+    .ftd-since::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; }
+    .ftd-services-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .ftd-service {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px;
+      transition: border-color .2s, transform .2s;
+      border-top: 2px solid transparent;
+    }
+    .ftd-service:hover { border-color: var(--border2); border-top-color: var(--green); transform: translateY(-3px); }
+    .ftd-service-icon { font-size: 1.4rem; margin-bottom: 10px; }
+    .ftd-service h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+    .ftd-service p { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+    .ftd-industries {
+      margin-top: 28px; padding: 20px 24px;
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: var(--r);
+    }
+    .ftd-industries-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .ftd-industries-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ftd-industry-tag {
+      font-size: 12px; color: var(--text2);
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 12px;
+    }
+
     /* ── Skills ── */
-    #skills { background: var(--bg); }
+    #skills { background: var(--bg2); }
     .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
     .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; transition: border-color .2s, transform .2s; }
     .skill-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
@@ -303,6 +353,7 @@
       <li><a href="#about">Sobre mí</a></li>
       <li><a href="#experience">Experiencia</a></li>
       <li><a href="#projects">Proyectos</a></li>
+      <li><a href="#feelthedata">Feel The Data</a></li>
       <li><a href="#education">Formación</a></li>
       <li><a href="#contact" class="nav-cta">Contacto</a></li>
     </ul>
@@ -366,7 +417,7 @@
         <h2 class="section-title">Ejecutivo en la intersección de operaciones, datos e IA</h2>
         <p>Ejecutivo con <strong>20+ años liderando equipos de hasta 3.500 personas</strong> en telcos y BPOs. Especialista en transformación de la atención al cliente. Logré reducciones de costos de hasta <strong>S/ 16M anuales</strong>, mejoras de <strong>+15 puntos en NPS</strong> y aumentos de eficiencia del <strong>10% Y/Y</strong>.</p>
         <p>Mi diferencial no es solo la gestión operativa — es la capacidad de <strong>convertir datos y procesos en sistemas replicables</strong>. Diseño marcos de trabajo, modelos analíticos y arquitecturas de automatización que funcionan sin depender de mi presencia. Homologué equipos en <strong>7 países</strong> logrando eficiencias y mejoras en menos de 1 año.</p>
-        <p>Hoy opero en la intersección de operaciones, datos e inteligencia artificial. Paralelamente, dirijo <strong>Feel The Data</strong>, consultora de IA aplicada a contact centers, y avanzo hacia el rol de <strong>Chief AI Officer</strong>.</p>
+        <p>Hoy opero en la intersección de operaciones, datos e inteligencia artificial. Paralelamente, dirijo <strong><a href="#feelthedata" style="color: var(--accent2); text-decoration: none;">Feel The Data</a></strong>, mi consultora especializada en servicios para contact centers, y avanzo hacia el rol de <strong>Chief AI Officer</strong>.</p>
       </div>
       <div class="about-pillars">
         <div class="pillar">
@@ -500,18 +551,11 @@
         <div class="timeline-header">
           <div>
             <div class="job-title">Fundador & Consultor Principal</div>
-            <div class="job-company">Feel The Data — Consultoría independiente</div>
+            <div class="job-company"><a href="#feelthedata" style="color: var(--accent2); text-decoration: none;">Feel The Data</a> — Empresa propia</div>
           </div>
           <div class="job-period">Ene 2020 – Presente · Lima</div>
         </div>
-        <p class="job-desc">Consultora especializada en IA y automatización para contact centers y operaciones de servicio. Comenzó como capacitación y consultoría en procesos de CC, evolucionando hacia agencia de IA aplicada.</p>
-        <ul class="job-bullets">
-          <li>Transcripción masiva de audios y speech analytics a escala industrial</li>
-          <li>Forecasting inteligente, optimización WFM y automatización de scheduling</li>
-          <li>Dashboards automatizados de performance operativo y alertas por KPI</li>
-          <li>AI Ops end-to-end, chatbots internos/externos y AI Appointment Setters</li>
-          <li>Modelo verticalizable: telcos, estudios jurídicos, constructoras, clínicas</li>
-        </ul>
+        <p class="job-desc">Consultora especializada en servicios para contact centers: capacitaciones, auditoría de procesos, consultoría operativa y soluciones de IA aplicada. <a href="#feelthedata" style="color: var(--accent2); font-size: 13px;">Ver sección completa →</a></p>
       </div>
 
       <!-- Konecta -->
@@ -627,14 +671,87 @@
         </div>
       </div>
 
-      <div class="project-card">
-        <h3>Feel The Data — Pipeline de Servicios IA</h3>
-        <p>Arquitectura de servicios de IA verticalizable desde transcripción hasta automatización completa de procesos. Mismo sistema, múltiples industrias: telcos, estudios jurídicos, constructoras, clínicas.</p>
-        <div class="project-tech">
-          <span class="tech-tag">No-code/Low-code</span>
-          <span class="tech-tag">Chatbots</span>
-          <span class="tech-tag">Forecasting</span>
-          <span class="tech-tag">AI Agents</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Feel The Data ── -->
+<section id="feelthedata">
+  <div class="container">
+    <div class="fade-in" style="margin-bottom: 56px;">
+      <p class="section-label">Empresa propia</p>
+      <h2 class="section-title">Feel The Data</h2>
+      <p class="section-desc">Consultora especializada en servicios para operaciones de contact center y atención al cliente, fundada en 2020.</p>
+    </div>
+    <div class="ftd-wrapper fade-in">
+
+      <div>
+        <div class="ftd-brand">
+          <div class="ftd-logo">📊</div>
+          <div>
+            <div class="ftd-brand-name">Feel The Data</div>
+            <div class="ftd-brand-tagline">Consultoría · Capacitación · Auditoría</div>
+          </div>
+        </div>
+        <div class="ftd-desc">
+          <p>Feel The Data es mi empresa consultora, fundada en 2020 a partir de años de experiencia gestionando operaciones de contact center a gran escala. Nació para transferir ese conocimiento a otras organizaciones que buscan mejorar sus operaciones de atención al cliente.</p>
+          <p>Trabajamos con empresas que quieren <strong>entender sus datos, mejorar sus procesos y desarrollar a sus equipos</strong>. No vendemos soluciones genéricas — entendemos la operación desde adentro y diseñamos intervenciones específicas para cada realidad.</p>
+          <p>El modelo es simple: <strong>conocimiento operativo real + metodología probada + enfoque práctico</strong>. Sin teoría vacía.</p>
+          <div class="ftd-since">Activa desde enero 2020 · Lima, Perú</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ftd-services-grid">
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">🎓</div>
+            <h4>Capacitaciones</h4>
+            <p>Formación práctica en WFM, métricas de contact center, forecast, gestión en tiempo real y liderazgo operativo para equipos de todos los niveles.</p>
+          </div>
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">🔍</div>
+            <h4>Auditoría de Procesos</h4>
+            <p>Diagnóstico y auditoría de procesos operativos en contact centers: flujos, KPIs, estructura de turnos, gobernanza de proveedores y compliance regulatorio.</p>
+          </div>
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">🗂️</div>
+            <h4>Consultoría Operativa</h4>
+            <p>Acompañamiento estratégico para mejorar la eficiencia, reducir costos y elevar la experiencia del cliente. Diseño de marcos de gestión replicables.</p>
+          </div>
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">🤖</div>
+            <h4>IA Aplicada a CC</h4>
+            <p>Implementación de soluciones de inteligencia artificial para operaciones: speech analytics, dashboards automáticos, forecasting predictivo y automatización de flujos.</p>
+          </div>
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">📈</div>
+            <h4>Diseño de Métricas</h4>
+            <p>Construcción de sistemas de medición de performance: KPIs operativos, tableros de gestión, métricas de calidad y reportes de productividad.</p>
+          </div>
+
+          <div class="ftd-service">
+            <div class="ftd-service-icon">👥</div>
+            <h4>Dimensionamiento WFM</h4>
+            <p>Modelos de capacidad, forecast de demanda, shrinkage y optimización de dotación para operaciones de contact center mono o multi-site.</p>
+          </div>
+
+        </div>
+
+        <div class="ftd-industries">
+          <div class="ftd-industries-label">Industrias atendidas</div>
+          <div class="ftd-industries-tags">
+            <span class="ftd-industry-tag">Telecomunicaciones</span>
+            <span class="ftd-industry-tag">Contact Centers & BPOs</span>
+            <span class="ftd-industry-tag">Estudios jurídicos</span>
+            <span class="ftd-industry-tag">Constructoras</span>
+            <span class="ftd-industry-tag">Clínicas & Salud</span>
+            <span class="ftd-industry-tag">Retail</span>
+          </div>
         </div>
       </div>
 
@@ -966,7 +1083,7 @@
     <div class="footer-links">
       <a href="#about">Sobre mí</a>
       <a href="#experience">Experiencia</a>
-      <a href="#projects">Proyectos</a>
+      <a href="#feelthedata">Feel The Data</a>
       <a href="https://linkedin.com/in/gabrielpizarro" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </div>
