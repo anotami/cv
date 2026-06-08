@@ -294,12 +294,46 @@
 
     /* ── Content ── */
     #content { background: var(--bg); }
-    .post-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 28px 32px; max-width: 700px; position: relative; }
-    .post-card::before { content: '"'; position: absolute; top: 12px; left: 22px; font-size: 4rem; color: var(--accent); opacity: 0.25; font-family: Georgia, serif; line-height: 1; }
-    .post-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; padding-left: 8px; }
-    .post-quote { font-size: 14px; color: var(--text2); font-style: italic; border-left: 2px solid var(--accent2); padding-left: 16px; margin: 16px 0; line-height: 1.7; }
-    .post-meta { font-size: 12px; color: var(--text3); display: flex; gap: 16px; align-items: center; }
+    .content-featured {
+      background: var(--bg2); border: 1px solid var(--accent);
+      border-radius: var(--r); padding: 28px 32px;
+      position: relative; margin-bottom: 48px;
+      background: linear-gradient(135deg, var(--bg2) 0%, rgba(37,99,235,0.06) 100%);
+    }
+    .content-featured::before { content: '"'; position: absolute; top: 12px; left: 22px; font-size: 4rem; color: var(--accent); opacity: 0.2; font-family: Georgia, serif; line-height: 1; }
+    .post-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .post-quote { font-size: 14px; color: var(--text2); font-style: italic; border-left: 2px solid var(--accent2); padding-left: 16px; margin: 14px 0; line-height: 1.7; }
+    .post-meta { font-size: 12px; color: var(--text3); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
     .post-reactions { color: var(--green); font-weight: 600; }
+
+    .articles-section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 20px; }
+    .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .article-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 22px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+      text-decoration: none; color: inherit;
+      transition: border-color .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .article-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border2); transition: background .2s; }
+    .article-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
+    .article-card:hover::before { background: var(--accent2); }
+    .article-topic {
+      font-family: var(--mono); font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 4px; display: inline-flex;
+      width: fit-content;
+    }
+    .topic-wfm { color: var(--accent2); background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.2); }
+    .topic-cx  { color: var(--green);   background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); }
+    .topic-carrera { color: var(--amber); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+    .article-title { font-size: 14.5px; font-weight: 700; line-height: 1.35; color: var(--text); }
+    .article-desc { font-size: 12.5px; color: var(--text2); line-height: 1.55; flex: 1; }
+    .article-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .article-source { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+    .article-arrow { font-size: 12px; color: var(--accent2); opacity: 0; transition: opacity .2s; }
+    .article-card:hover .article-arrow { opacity: 1; }
 
     /* ── Contact ── */
     #contact { background: var(--bg2); }
@@ -354,7 +388,7 @@
       <li><a href="#experience">Experiencia</a></li>
       <li><a href="#projects">Proyectos</a></li>
       <li><a href="#feelthedata">Feel The Data</a></li>
-      <li><a href="#education">Formación</a></li>
+      <li><a href="#content">Artículos</a></li>
       <li><a href="#contact" class="nav-cta">Contacto</a></li>
     </ul>
   </div>
@@ -988,20 +1022,107 @@
   <div class="container">
     <div class="fade-in" style="margin-bottom: 48px;">
       <p class="section-label">Pensamiento ejecutivo</p>
-      <h2 class="section-title">Contenido destacado</h2>
+      <h2 class="section-title">Artículos & publicaciones</h2>
+      <p class="section-desc">Contenido sobre operaciones de contact center, WFM, pronóstico y gestión publicado en LinkedIn.</p>
     </div>
-    <div class="post-card fade-in">
+
+    <!-- Post destacado -->
+    <div class="content-featured fade-in">
       <div class="post-title">"De la chispa al sistema: cómo mi equipo ganó el IA Demo Day"</div>
       <blockquote class="post-quote">
         "Me pone muy contento hacerles preguntas, desafiarlos y verlos aportar valor mientras aprenden a usar estas herramientas, es un camino divertido."
       </blockquote>
       <p style="font-size: 13.5px; color: var(--text2); margin-bottom: 14px;">
-        Sobre cómo un experimento interno con IA se convirtió en una solución de escucha y transcripción masiva de llamadas, elegida en el IA Demo Day de Integratel Perú. Refleja la filosofía de desafiar al equipo y construir herramientas reales desde adentro de la operación.
+        Sobre cómo un experimento interno con IA se convirtió en una solución de escucha y transcripción masiva de llamadas, elegida en el IA Demo Day de Integratel Perú.
       </p>
       <div class="post-meta">
-        <span>LinkedIn</span>
-        <span class="post-reactions">76 reacciones</span>
-        <a href="https://linkedin.com/in/gabrielpizarro" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: none; font-size: 12px;">Ver perfil →</a>
+        <span>LinkedIn · Post</span>
+        <span class="post-reactions">★ 76 reacciones</span>
+        <a href="https://www.linkedin.com/in/gabrielpizarro/recent-activity/all/" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: none; font-size: 12px;">Ver actividad →</a>
+      </div>
+    </div>
+
+    <!-- Artículos LinkedIn Pulse -->
+    <div class="fade-in">
+      <p class="articles-section-label">Artículos publicados — LinkedIn Pulse</p>
+      <div class="articles-grid">
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/el-pron%C3%B3stico-de-llamadas-cuando-excel-ya-alcanza-pizarro-garcia-aghhe/" target="_blank" rel="noopener">
+          <span class="article-topic topic-wfm">WFM · Forecast</span>
+          <div class="article-title">El pronóstico de llamadas: cuando Excel ya no alcanza</div>
+          <div class="article-desc">Cuándo y por qué las hojas de cálculo dejan de ser suficientes para el forecast de demanda en contact centers, y qué alternativas existen.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/hablemos-mas-de-pronostico-gabriel-pizarro-garcia-ryewe/" target="_blank" rel="noopener">
+          <span class="article-topic topic-wfm">WFM · Forecast</span>
+          <div class="article-title">Hablemos más de pronóstico</div>
+          <div class="article-desc">Profundización en metodologías de pronóstico de demanda para operaciones de contact center: modelos, variables y errores comunes.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/reflexiones-sobre-la-gesti%C3%B3n-de-demanda-parte-1-pizarro-garcia-clile/" target="_blank" rel="noopener">
+          <span class="article-topic topic-wfm">WFM · Gestión de demanda</span>
+          <div class="article-title">Reflexiones sobre la gestión de demanda — Parte 1</div>
+          <div class="article-desc">Primera entrega sobre los fundamentos y desafíos de la gestión de demanda en operaciones de atención al cliente a escala.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/reflexiones-sobre-la-gesti%C3%B3n-de-demanda-parte-2-pizarro-garcia-qm1he/" target="_blank" rel="noopener">
+          <span class="article-topic topic-wfm">WFM · Gestión de demanda</span>
+          <div class="article-title">Reflexiones sobre la gestión de demanda — Parte 2</div>
+          <div class="article-desc">Segunda entrega: continuación del análisis sobre planificación de demanda, capacidad y los marcos de gestión aplicados en entornos complejos.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/tips-tricks-de-atenci%C3%B3n-telef%C3%B3nica-al-cliente-gabriel-pizarro-garcia-2a9ge/" target="_blank" rel="noopener">
+          <span class="article-topic topic-cx">CX · Atención telefónica</span>
+          <div class="article-title">Tips & Tricks de atención telefónica al cliente — Parte 1</div>
+          <div class="article-desc">Buenas prácticas y recomendaciones operativas para equipos de atención al cliente en canales telefónicos, desde la gestión hasta la experiencia.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/pulse/tips-tricks-de-atenci%C3%B3n-telef%C3%B3nica-al-cliente-2-pizarro-garcia-awmle/" target="_blank" rel="noopener">
+          <span class="article-topic topic-cx">CX · Atención telefónica</span>
+          <div class="article-title">Tips & Tricks de atención telefónica al cliente — Parte 2</div>
+          <div class="article-desc">Segunda entrega de recomendaciones prácticas para la gestión de equipos de contact center y la mejora continua de la atención al cliente.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://es.linkedin.com/pulse/tu-hoja-de-vida-gabriel-pizarro-garcia" target="_blank" rel="noopener">
+          <span class="article-topic topic-carrera">Carrera & liderazgo</span>
+          <div class="article-title">Tu hoja de vida + TU hoja de vida</div>
+          <div class="article-desc">Reflexión sobre cómo construir y comunicar una trayectoria profesional auténtica en el mundo de las operaciones y el talento ejecutivo.</div>
+          <div class="article-footer">
+            <span class="article-source">LinkedIn Pulse</span>
+            <span class="article-arrow">Leer →</span>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.linkedin.com/in/gabrielpizarro/recent-activity/articles/" target="_blank" rel="noopener" style="border-style: dashed; justify-content: center; align-items: center; text-align: center; min-height: 140px;">
+          <div style="font-size: 1.4rem; margin-bottom: 8px;">📄</div>
+          <div class="article-title" style="font-size: 13px; color: var(--text3);">Ver todos los artículos en LinkedIn</div>
+          <div class="article-arrow" style="opacity: 1; margin-top: 6px;">→</div>
+        </a>
+
       </div>
     </div>
   </div>
