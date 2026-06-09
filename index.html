@@ -1503,7 +1503,7 @@
           <div class="sched-confirm-icon">✓</div>
           <h3 class="sched-confirm-title">¡Reunión solicitada!</h3>
           <p class="sched-confirm-desc" id="confirm-summary"></p>
-          <p class="sched-confirm-note">Se abrirá tu cliente de email con los detalles pre-llenados. Enviá el correo para confirmar la reunión — recibirás respuesta en menos de 24 horas.</p>
+          <p class="sched-confirm-note">Se abrió WhatsApp con el mensaje pre-llenado. Envialo para confirmar la reunión — recibirás respuesta en menos de 24 horas.</p>
           <button class="btn btn-secondary" id="new-booking" style="margin-top:24px;">Agendar otra reunión</button>
         </div>
 
@@ -1754,7 +1754,16 @@
       `\nQuedo a tu disposición para confirmar.\n\nSaludos,\n${name}`
     );
 
-    window.location.href = `mailto:${HOST_EMAIL}?subject=${subject}&body=${body}`;
+    const waNumber = '51932900134';
+    const waText = encodeURIComponent(
+      `Hola Gabriel, quiero solicitar una reunión 📅\n\n` +
+      `*Fecha:* ${dateLabel}\n*Horario:* ${selectedTime} hs (Lima)\n\n` +
+      `*Nombre:* ${name}\n*Email:* ${email}\n` +
+      (company ? `*Empresa:* ${company}\n` : '') +
+      `*Motivo:* ${reason}\n` +
+      (message ? `\n${message}` : '')
+    );
+    window.open(`https://wa.me/${waNumber}?text=${waText}`, '_blank');
 
     document.getElementById('confirm-summary').textContent =
       `${dateLabel} · ${selectedTime} hs · ${reason}`;
