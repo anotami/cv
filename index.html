@@ -399,6 +399,77 @@
       .wa-float { bottom: 20px; right: 20px; }
     }
 
+    /* ── Scheduler ── */
+    .scheduler {
+      max-width: 520px; margin: 0 auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px;
+    }
+    .sched-step.hidden { display: none; }
+    .sched-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .sched-nav {
+      background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+      width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .sched-nav:hover { background: var(--bg2); border-color: var(--accent); }
+    .sched-month-label { font-weight: 700; font-size: 16px; color: var(--text); }
+    .sched-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 8px; text-align: center; }
+    .sched-weekdays span { font-size: 11px; font-weight: 600; color: var(--text-muted); font-family: var(--mono); padding: 6px 0; }
+    .sched-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+    .sched-day {
+      aspect-ratio: 1; border-radius: 8px; border: 1px solid transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 500; cursor: default;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .sched-day.empty { background: transparent; }
+    .sched-day.past { color: var(--text-muted); opacity: .35; }
+    .sched-day.unavailable { color: var(--text-muted); opacity: .4; }
+    .sched-day.available {
+      background: var(--bg3); color: var(--text); cursor: pointer;
+      border-color: var(--border);
+    }
+    .sched-day.available:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .sched-day.today { border-color: var(--accent2) !important; color: var(--accent2); }
+    .sched-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 16px; font-family: var(--mono); }
+    .sched-back-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .sched-back { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 13px; padding: 0; }
+    .sched-back:hover { text-decoration: underline; }
+    .sched-selected-date { font-size: 14px; font-weight: 600; color: var(--text); }
+    .sched-slots { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .sched-slot {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 4px; text-align: center;
+      font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer;
+      font-family: var(--mono);
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .sched-slot:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .sched-form { display: flex; flex-direction: column; gap: 16px; }
+    .sched-field { display: flex; flex-direction: column; gap: 6px; }
+    .sched-field label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+    .sched-field input, .sched-field select, .sched-field textarea {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; color: var(--text); font-size: 14px; font-family: inherit;
+      transition: border-color .2s;
+    }
+    .sched-field input:focus, .sched-field select:focus, .sched-field textarea:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .sched-field select { appearance: none; cursor: pointer; }
+    .sched-field textarea { resize: vertical; }
+    .sched-confirm-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(16,185,129,.15); border: 2px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--green); margin: 0 auto 20px;
+    }
+    .sched-confirm-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .sched-confirm-desc { text-align: center; font-size: 15px; color: var(--text2); margin-bottom: 12px; }
+    .sched-confirm-note { text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
     /* ── Referencias ── */
     .ref-grid {
       display: grid;
@@ -1363,11 +1434,80 @@
     <div class="fade-in" style="margin-bottom: 48px;">
       <p class="section-label">Reunámonos</p>
       <h2 class="section-title">Agendá una llamada</h2>
-      <p class="section-desc">Seleccioná un horario disponible y reservá una reunión directamente. Recibirás una confirmación por email al instante.</p>
+      <p class="section-desc">Elegí un día y horario disponible. Te enviaré confirmación por email.</p>
     </div>
-    <div class="fade-in" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; min-height: 600px;">
-      <!-- Cal.com inline embed — reemplazá TU-USUARIO por tu username de cal.com -->
-      <div id="cal-embed" style="width:100%; height:100%; min-height:600px; overflow:scroll;"></div>
+    <div class="fade-in">
+      <div class="scheduler" id="scheduler">
+
+        <!-- Paso 1: Calendario -->
+        <div class="sched-step" id="step-calendar">
+          <div class="sched-header">
+            <button class="sched-nav" id="prev-month">&#8249;</button>
+            <span class="sched-month-label" id="month-label"></span>
+            <button class="sched-nav" id="next-month">&#8250;</button>
+          </div>
+          <div class="sched-weekdays">
+            <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
+          </div>
+          <div class="sched-days" id="calendar-grid"></div>
+          <p class="sched-hint">Lunes a viernes · Lima, Perú (PET UTC-5)</p>
+        </div>
+
+        <!-- Paso 2: Horarios -->
+        <div class="sched-step hidden" id="step-times">
+          <div class="sched-back-row">
+            <button class="sched-back" id="back-to-calendar">← Cambiar fecha</button>
+            <span class="sched-selected-date" id="selected-date-label"></span>
+          </div>
+          <div class="sched-slots" id="time-slots"></div>
+        </div>
+
+        <!-- Paso 3: Formulario -->
+        <div class="sched-step hidden" id="step-form">
+          <div class="sched-back-row">
+            <button class="sched-back" id="back-to-times">← Cambiar horario</button>
+            <span class="sched-selected-date" id="selected-datetime-label"></span>
+          </div>
+          <form class="sched-form" id="booking-form">
+            <div class="sched-field">
+              <label>Nombre completo</label>
+              <input type="text" id="f-name" placeholder="Tu nombre" required />
+            </div>
+            <div class="sched-field">
+              <label>Email</label>
+              <input type="email" id="f-email" placeholder="tu@email.com" required />
+            </div>
+            <div class="sched-field">
+              <label>Empresa / Organización</label>
+              <input type="text" id="f-company" placeholder="Opcional" />
+            </div>
+            <div class="sched-field">
+              <label>Motivo de la reunión</label>
+              <select id="f-reason">
+                <option value="Oportunidad ejecutiva">Oportunidad ejecutiva</option>
+                <option value="Proyecto de consultoría">Proyecto de consultoría (Feel The Data)</option>
+                <option value="Colaboración o alianza">Colaboración o alianza</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="sched-field">
+              <label>Mensaje adicional (opcional)</label>
+              <textarea id="f-message" rows="3" placeholder="Contexto breve sobre la reunión..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Confirmar reunión →</button>
+          </form>
+        </div>
+
+        <!-- Paso 4: Confirmación -->
+        <div class="sched-step hidden" id="step-confirm">
+          <div class="sched-confirm-icon">✓</div>
+          <h3 class="sched-confirm-title">¡Reunión solicitada!</h3>
+          <p class="sched-confirm-desc" id="confirm-summary"></p>
+          <p class="sched-confirm-note">Se abrirá tu cliente de email con los detalles pre-llenados. Enviá el correo para confirmar la reunión — recibirás respuesta en menos de 24 horas.</p>
+          <button class="btn btn-secondary" id="new-booking" style="margin-top:24px;">Agendar otra reunión</button>
+        </div>
+
+      </div>
     </div>
   </div>
 </section>
@@ -1479,46 +1619,151 @@
   });
 </script>
 
-<!-- ── Cal.com embed ── -->
-<!-- PASO 1: Creá tu cuenta en https://cal.com y reemplazá TU-USUARIO/30min por tu link real -->
+<!-- ── Scheduler JS ── -->
 <script>
-(function (C, A, L) {
-  let p = function (a, ar) { a.q.push(ar); };
-  let d = C.document;
-  C.Cal = C.Cal || function () {
-    let cal = C.Cal; let ar = arguments;
-    if (!cal.loaded) {
-      cal.ns = {}; cal.q = cal.q || [];
-      d.head.appendChild(d.createElement("script")).src = A;
-      cal.loaded = true;
+(function () {
+  const HOST_EMAIL = 'gabriel.pizarro.garcia@gmail.com';
+  const AVAILABLE_DAYS = [1, 2, 3, 4, 5]; // Lun–Vie (0=Dom)
+  const TIME_SLOTS = [
+    '09:00','09:30','10:00','10:30','11:00','11:30',
+    '14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'
+  ];
+  const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const DAYS_ES   = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
+  let currentYear, currentMonth, selectedDate = null, selectedTime = null;
+
+  function init() {
+    const today = new Date();
+    currentYear  = today.getFullYear();
+    currentMonth = today.getMonth();
+    renderCalendar();
+
+    document.getElementById('prev-month').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    });
+    document.getElementById('next-month').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    });
+    document.getElementById('back-to-calendar').addEventListener('click', () => showStep('calendar'));
+    document.getElementById('back-to-times').addEventListener('click', () => showStep('times'));
+    document.getElementById('new-booking').addEventListener('click', () => {
+      selectedDate = null; selectedTime = null;
+      showStep('calendar');
+    });
+    document.getElementById('booking-form').addEventListener('submit', handleSubmit);
+  }
+
+  function showStep(name) {
+    ['calendar','times','form','confirm'].forEach(s => {
+      document.getElementById('step-' + s).classList.toggle('hidden', s !== name);
+    });
+  }
+
+  function renderCalendar() {
+    document.getElementById('month-label').textContent =
+      MONTHS_ES[currentMonth] + ' ' + currentYear;
+
+    const grid    = document.getElementById('calendar-grid');
+    const today   = new Date();
+    today.setHours(0,0,0,0);
+    const minDate = new Date(today);
+    minDate.setDate(minDate.getDate() + 1); // mínimo mañana
+
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const offset   = (firstDay + 6) % 7; // ajuste Lun=0
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    let html = '';
+    for (let i = 0; i < offset; i++) html += '<div class="sched-day empty"></div>';
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date    = new Date(currentYear, currentMonth, d);
+      const dow     = date.getDay();
+      const isPast  = date < minDate;
+      const isAvail = AVAILABLE_DAYS.includes(dow) && !isPast;
+      const isToday = date.toDateString() === today.toDateString();
+
+      let cls = 'sched-day';
+      if (isAvail)  cls += ' available';
+      else if (isPast) cls += ' past';
+      else cls += ' unavailable';
+      if (isToday) cls += ' today';
+
+      const dateStr = currentYear + '-' + String(currentMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      html += `<div class="${cls}" ${isAvail ? `data-date="${dateStr}"` : ''}>${d}</div>`;
     }
-    if (ar[0] === L) {
-      const api = function () { p(api, arguments); };
-      const namespace = ar[1];
-      api.q = api.q || [];
-      if (typeof namespace === "string") {
-        cal.ns[namespace] = cal.ns[namespace] || api;
-        p(cal.ns[namespace], ar);
-        p(cal, ["initNamespace", namespace]);
-      } else p(cal, ar);
-      return;
-    }
-    p(cal, ar);
-  };
-})(window, "https://app.cal.com/embed/embed.js", "init");
 
-Cal("init", { origin: "https://cal.com" });
+    grid.innerHTML = html;
+    grid.querySelectorAll('.sched-day.available').forEach(el => {
+      el.addEventListener('click', () => selectDate(el.dataset.date));
+    });
+  }
 
-Cal("inline", {
-  elementOrSelector: "#cal-embed",
-  calLink: "TU-USUARIO/30min",
-  layout: "month_view"
-});
+  function selectDate(dateStr) {
+    selectedDate = dateStr;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m-1, d);
+    const label = DAYS_ES[date.getDay()] + ' ' + d + ' de ' + MONTHS_ES[m-1] + ' ' + y;
+    document.getElementById('selected-date-label').textContent = label;
 
-Cal("ui", {
-  theme: "dark",
-  styles: { branding: { brandColor: "#2563eb" } }
-});
+    const slots = document.getElementById('time-slots');
+    slots.innerHTML = TIME_SLOTS.map(t =>
+      `<div class="sched-slot" data-time="${t}">${t} hs</div>`
+    ).join('');
+    slots.querySelectorAll('.sched-slot').forEach(el => {
+      el.addEventListener('click', () => selectTime(el.dataset.time, label));
+    });
+    showStep('times');
+  }
+
+  function selectTime(time, dateLabel) {
+    selectedTime = time;
+    const fullLabel = dateLabel + ' · ' + time + ' hs (PET)';
+    document.getElementById('selected-datetime-label').textContent = fullLabel;
+    showStep('form');
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const name    = document.getElementById('f-name').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const company = document.getElementById('f-company').value.trim();
+    const reason  = document.getElementById('f-reason').value;
+    const message = document.getElementById('f-message').value.trim();
+
+    const [y, m, d] = selectedDate.split('-').map(Number);
+    const date = new Date(y, m-1, d);
+    const dateLabel = DAYS_ES[date.getDay()] + ' ' + d + ' de ' + MONTHS_ES[m-1] + ' ' + y;
+
+    const subject = encodeURIComponent(
+      `Solicitud de reunión — ${dateLabel} ${selectedTime} hs — ${name}`
+    );
+    const body = encodeURIComponent(
+      `Hola Gabriel,\n\nQuiero solicitar una reunión con vos.\n\n` +
+      `Fecha: ${dateLabel}\nHorario: ${selectedTime} hs (Lima, PET)\n\n` +
+      `Nombre: ${name}\nEmail: ${email}\n` +
+      (company ? `Empresa: ${company}\n` : '') +
+      `Motivo: ${reason}\n` +
+      (message ? `\nMensaje:\n${message}\n` : '') +
+      `\nQuedo a tu disposición para confirmar.\n\nSaludos,\n${name}`
+    );
+
+    window.location.href = `mailto:${HOST_EMAIL}?subject=${subject}&body=${body}`;
+
+    document.getElementById('confirm-summary').textContent =
+      `${dateLabel} · ${selectedTime} hs · ${reason}`;
+    showStep('confirm');
+    document.getElementById('booking-form').reset();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
 </script>
 
 <a href="https://wa.me/51932900134" target="_blank" rel="noopener" class="wa-float" aria-label="Enviar mensaje por WhatsApp">
