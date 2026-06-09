@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico de Madurez Operativa · FTD Feel The Data</title>
+  <meta name="description" content="24 preguntas. 6 minutos. Descubrí en qué nivel de madurez está tu operación de contact center en 6 ejes clave." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #090e1a;
+      --bg2:       #0d1424;
+      --bg3:       #111827;
+      --surface:   #131c2e;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --text:      #f0f4ff;
+      --text2:     #c8d4f0;
+      --text-muted:#6b7a9e;
+      --accent:    #2563eb;
+      --accent2:   #f59e0b;
+      --green:     #10b981;
+      --mono:      'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+    /* ── Progress bar ── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 100;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      width: 0%; transition: width .3s ease;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+      background: rgba(9,14,26,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-weight: 800; font-size: 15px; text-decoration: none; color: var(--text); }
+    .nav-logo span { color: var(--accent2); }
+    .nav-back { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    .nav-back:hover { color: var(--accent2); }
+
+    /* ── Layout ── */
+    .container { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Cover ── */
+    #cover {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 80px 0 60px;
+    }
+    .cover-label {
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      color: var(--accent2); letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .cover-label span { color: var(--text-muted); margin: 0 8px; }
+    .cover-title {
+      font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 800;
+      line-height: 1.08; letter-spacing: -.03em; margin-bottom: 24px;
+    }
+    .cover-title .activo  { color: var(--green); }
+    .cover-title .pasivo  { color: var(--accent2); }
+    .cover-subtitle {
+      font-size: 1.1rem; color: var(--text2); max-width: 520px;
+      line-height: 1.7; margin-bottom: 40px;
+    }
+    .cover-stats { display: flex; gap: 40px; margin-bottom: 48px; }
+    .cover-stat .num { font-size: 2.8rem; font-weight: 800; color: var(--accent2); line-height: 1; margin-bottom: 4px; }
+    .cover-stat .lbl { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; }
+    .cover-axes {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border2); border-radius: 12px; overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .cover-axis {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .cover-axis:nth-child(even) { border-right: none; }
+    .cover-axis:nth-last-child(-n+2) { border-bottom: none; }
+    .cover-axis-num { font-family: var(--mono); font-size: 11px; color: var(--accent2); margin-bottom: 4px; }
+    .cover-axis-name { font-size: 13px; font-weight: 600; color: var(--text2); }
+    .btn-start {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent2); color: #0a0a0a;
+      font-weight: 700; font-size: 15px; padding: 14px 32px;
+      border-radius: 8px; border: none; cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,.35); }
+
+    /* ── Quiz ── */
+    #quiz { display: none; padding: 80px 0 60px; }
+    .quiz-header { margin-bottom: 36px; }
+    .quiz-progress-text {
+      font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .quiz-progress-track {
+      height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden;
+    }
+    .quiz-progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 2px; transition: width .4s ease;
+    }
+    .quiz-axis-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 6px; padding: 5px 12px;
+      font-family: var(--mono); font-size: 11px; color: var(--accent2);
+      margin-bottom: 20px; margin-top: 28px;
+    }
+    .quiz-q-num { font-size: 12px; color: var(--text-muted); font-family: var(--mono); margin-bottom: 12px; }
+    .quiz-question { font-size: 1.25rem; font-weight: 700; line-height: 1.4; margin-bottom: 28px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-option {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 16px 20px; cursor: pointer;
+      transition: border-color .15s, background .15s, transform .1s;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .quiz-option:hover { border-color: var(--accent2); transform: translateX(4px); }
+    .quiz-option.selected { border-color: var(--accent2); background: rgba(245,158,11,.08); }
+    .opt-level {
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      color: var(--accent2); min-width: 28px; padding-top: 2px;
+    }
+    .opt-text { font-size: 14px; color: var(--text2); line-height: 1.55; }
+    .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
+    .btn-nav {
+      background: var(--bg3); border: 1px solid var(--border2); color: var(--text);
+      padding: 10px 22px; border-radius: 8px; cursor: pointer; font-size: 13px;
+      font-weight: 600; transition: border-color .15s, background .15s;
+    }
+    .btn-nav:hover { border-color: var(--accent); background: var(--surface); }
+    .btn-nav:disabled { opacity: .3; cursor: default; }
+    .btn-next {
+      background: var(--accent2); color: #0a0a0a; border: none;
+      padding: 10px 28px; border-radius: 8px; cursor: pointer;
+      font-size: 14px; font-weight: 700; transition: transform .15s, box-shadow .15s;
+    }
+    .btn-next:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(245,158,11,.3); }
+    .btn-next:disabled { opacity: .35; cursor: default; transform: none; box-shadow: none; }
+
+    /* ── Results ── */
+    #results { display: none; padding: 80px 0 80px; }
+    .result-header { margin-bottom: 48px; }
+    .result-label { font-family: var(--mono); font-size: 11px; color: var(--accent2); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
+    .result-title { font-size: clamp(1.8rem,5vw,2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+    .result-badge {
+      display: inline-block; padding: 6px 18px; border-radius: 999px;
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      border: 1px solid; margin-bottom: 24px;
+    }
+    .result-summary { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 48px; }
+
+    /* Radar / bars */
+    .axis-results { display: flex; flex-direction: column; gap: 20px; margin-bottom: 48px; }
+    .axis-result-row { display: flex; flex-direction: column; gap: 8px; }
+    .axis-result-top { display: flex; justify-content: space-between; align-items: center; }
+    .axis-result-name { font-size: 14px; font-weight: 600; }
+    .axis-result-score {
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      color: var(--accent2);
+    }
+    .axis-bar-track {
+      height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden;
+    }
+    .axis-bar-fill {
+      height: 100%; border-radius: 4px;
+      transition: width 1s ease;
+    }
+    .axis-result-level { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+
+    .overall-card {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 32px; margin-bottom: 40px;
+      display: flex; gap: 32px; align-items: center;
+    }
+    .overall-score-circle {
+      width: 100px; height: 100px; border-radius: 50%; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 3px solid var(--accent2);
+    }
+    .overall-score-num { font-size: 2rem; font-weight: 800; color: var(--accent2); line-height: 1; }
+    .overall-score-den { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+    .overall-text h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .overall-text p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* CTA */
+    .result-cta {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 36px; text-align: center;
+    }
+    .result-cta h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+    .result-cta p { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+    .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25d366; color: #fff; font-weight: 700; font-size: 14px;
+      padding: 12px 24px; border-radius: 8px; text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,.35); }
+    .btn-restart {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--bg3); border: 1px solid var(--border2); color: var(--text);
+      font-weight: 600; font-size: 14px; padding: 12px 24px;
+      border-radius: 8px; cursor: pointer; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-restart:hover { border-color: var(--accent2); }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 28px 0;
+      text-align: center; font-family: var(--mono); font-size: 12px;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 600px) {
+      .cover-stats { gap: 24px; }
+      .cover-axes { grid-template-columns: 1fr; }
+      .cover-axis:nth-child(even) { border-right: none; }
+      .cover-axis { border-right: none; }
+      .overall-card { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <a href="../index.html" class="nav-logo">FTD<span>.</span></a>
+  <a href="../index.html#feelthedata" class="nav-back">← Volver al sitio</a>
+</nav>
+
+<!-- ── Cover ── -->
+<div id="cover">
+  <div class="container">
+    <p class="cover-label">Diagnóstico Operativo <span>·</span> 6 Ejes <span>·</span> 5 Niveles</p>
+    <h1 class="cover-title">
+      Tu operación es un<br />
+      <span class="activo">activo</span> o un <span class="pasivo">pasivo.</span><br />
+      El diagnóstico lo define.
+    </h1>
+    <p class="cover-subtitle">
+      Una operación madura corre sin vos. Una inmadura te arrastra de vuelta cada vez que creés haberla delegado. Este diagnóstico mide exactamente dónde está cada parte de la tuya.
+    </p>
+    <div class="cover-stats">
+      <div class="cover-stat"><div class="num">6</div><div class="lbl">Ejes operativos</div></div>
+      <div class="cover-stat"><div class="num">5</div><div class="lbl">Niveles de madurez</div></div>
+      <div class="cover-stat"><div class="num">24</div><div class="lbl">Señales evaluadas</div></div>
+    </div>
+    <div class="cover-axes">
+      <div class="cover-axis"><div class="cover-axis-num">01</div><div class="cover-axis-name">Forecast &amp; Capacidad</div></div>
+      <div class="cover-axis"><div class="cover-axis-num">02</div><div class="cover-axis-name">Calidad &amp; Voz del Cliente</div></div>
+      <div class="cover-axis"><div class="cover-axis-num">03</div><div class="cover-axis-name">Reclamos &amp; Cumplimiento</div></div>
+      <div class="cover-axis"><div class="cover-axis-num">04</div><div class="cover-axis-name">Performance &amp; Gestión Económica</div></div>
+      <div class="cover-axis"><div class="cover-axis-num">05</div><div class="cover-axis-name">Datos &amp; Reporting</div></div>
+      <div class="cover-axis"><div class="cover-axis-num">06</div><div class="cover-axis-name">Liderazgo &amp; Autonomía</div></div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Iniciar diagnóstico →</button>
+  </div>
+</div>
+
+<!-- ── Quiz ── -->
+<div id="quiz">
+  <div class="container">
+    <div class="quiz-header">
+      <div class="quiz-progress-text" id="q-progress-text">Pregunta 1 de 24</div>
+      <div class="quiz-progress-track">
+        <div class="quiz-progress-fill" id="q-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="q-axis-badge" class="quiz-axis-badge"></div>
+    <div class="quiz-q-num" id="q-num"></div>
+    <div class="quiz-question" id="q-text"></div>
+    <div class="quiz-options" id="q-options"></div>
+    <div class="quiz-nav">
+      <button class="btn-nav" id="btn-prev" onclick="prevQ()">← Anterior</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="results">
+  <div class="container">
+    <div class="result-header">
+      <p class="result-label">FTD Operational Maturity · Resultado</p>
+      <h2 class="result-title" id="r-title"></h2>
+      <div class="result-badge" id="r-badge"></div>
+      <p class="result-summary" id="r-summary"></p>
+    </div>
+
+    <div class="overall-card">
+      <div class="overall-score-circle" id="r-circle">
+        <span class="overall-score-num" id="r-score-num"></span>
+        <span class="overall-score-den">/ 5.0</span>
+      </div>
+      <div class="overall-text">
+        <h3 id="r-level-name"></h3>
+        <p id="r-level-desc"></p>
+      </div>
+    </div>
+
+    <div class="axis-results" id="r-axes"></div>
+
+    <div class="result-cta">
+      <h3>¿Querés trabajar estos gaps?</h3>
+      <p>Feel The Data trabaja directamente con equipos de operaciones para llevar cada eje al siguiente nivel. Diagnóstico gratuito, consultoría a medida.</p>
+      <div class="cta-buttons">
+        <a class="btn-wa" id="wa-cta" href="#" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Hablar con Gabriel
+        </a>
+        <a class="btn-restart" onclick="restartQuiz()">↺ Repetir diagnóstico</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="../index.html">Gabriel Pizarro García</a> · <a href="../index.html#feelthedata">Feel The Data</a> · Operational Maturity Model v1
+  </div>
+</footer>
+
+<script>
+const AXES = [
+  { id: 'forecast',     label: '01', name: 'Forecast & Capacidad' },
+  { id: 'calidad',      label: '02', name: 'Calidad & Voz del Cliente' },
+  { id: 'reclamos',     label: '03', name: 'Reclamos & Cumplimiento' },
+  { id: 'performance',  label: '04', name: 'Performance & Gestión Económica' },
+  { id: 'datos',        label: '05', name: 'Datos & Reporting' },
+  { id: 'liderazgo',    label: '06', name: 'Liderazgo & Autonomía' }
+];
+
+const QUESTIONS = [
+  // 01 Forecast & Capacidad
+  {
+    axis: 0,
+    text: '¿Cómo generás el pronóstico de demanda para tu operación?',
+    opts: [
+      'No tenemos pronóstico formal. Reaccionamos al volumen que llega cada día.',
+      'Usamos promedios históricos simples para estimar cuántas personas necesitamos.',
+      'Tenemos un modelo de forecast semanal que considera estacionalidad básica.',
+      'Forecast multivariable con ajuste por canal, segmento y eventos planificados.',
+      'Modelo predictivo automatizado con alertas de desvío y re-planificación dinámica.'
+    ]
+  },
+  {
+    axis: 0,
+    text: '¿Cómo gestionás la capacidad cuando la demanda sube o baja inesperadamente?',
+    opts: [
+      'Improvisamos: pedimos refuerzo en el momento o dejamos que el nivel de servicio caiga.',
+      'Tenemos un listado de personas disponibles para llamar cuando hay picos.',
+      'Contamos con turnos flexibles y un protocolo básico de escalamiento.',
+      'Gestión de capacidad con flexibilidad contractual y alertas en tiempo real.',
+      'Sistema integrado de gestión de capacidad con ajuste automático y proveedores en standby.'
+    ]
+  },
+  {
+    axis: 0,
+    text: '¿Con cuánta anticipación planificás la dotación requerida?',
+    opts: [
+      'Día a día. La planificación es para el turno que arranca en horas.',
+      'Semana a semana, sin demasiada consistencia.',
+      'Planificación mensual con revisión semanal estructurada.',
+      'Planificación trimestral con modelos de largo plazo y revisión mensual.',
+      'Planificación a 12+ meses integrada con el presupuesto y la estrategia de negocio.'
+    ]
+  },
+  {
+    axis: 0,
+    text: '¿Medís la precisión de tus pronósticos y hacés ajustes en base a eso?',
+    opts: [
+      'No medimos precisión. Si nos fue mal, lo notamos después.',
+      'A veces comparamos lo estimado con lo real, pero no de forma sistemática.',
+      'Calculamos el desvío forecast vs real mensualmente y ajustamos el modelo.',
+      'KPI de precisión de forecast con benchmark y mejora continua documentada.',
+      'Ciclo cerrado de mejora: desvíos alimentan el modelo automáticamente cada ciclo.'
+    ]
+  },
+  // 02 Calidad & Voz del Cliente
+  {
+    axis: 1,
+    text: '¿Cómo medís la calidad de las interacciones con clientes?',
+    opts: [
+      'No tenemos evaluación de calidad formal. Los problemas surgen por quejas.',
+      'Monitoreamos algunas llamadas al azar, sin criterio sistemático.',
+      'Tenemos una grilla de evaluación y monitoreamos una muestra definida mensualmente.',
+      'Monitoreo estructurado con calibración entre evaluadores y feedback individualizado.',
+      'Speech analytics automatizado con monitoreo de 100% de interacciones y alertas en tiempo real.'
+    ]
+  },
+  {
+    axis: 1,
+    text: '¿Cómo capturás la voz del cliente (NPS, CSAT, VoC)?',
+    opts: [
+      'No medimos la satisfacción del cliente de forma sistemática.',
+      'Enviamos alguna encuesta ocasional, pero no hay seguimiento estructurado.',
+      'Medición de NPS o CSAT post-interacción con reporte mensual.',
+      'Programa de VoC con análisis de drivers, segmentación y acción sobre hallazgos.',
+      'VoC integrado a la operación en tiempo real: insights que generan mejoras semanales.'
+    ]
+  },
+  {
+    axis: 1,
+    text: '¿Con qué frecuencia compartís resultados de calidad con el equipo operativo?',
+    opts: [
+      'Los resultados no se comparten. Solo el área de calidad los ve.',
+      'Se comparten cuando hay un problema puntual o reunión de equipo.',
+      'Reporte mensual de calidad comunicado a supervisores y operadores.',
+      'Feedback semanal individualizado con plan de acción por colaborador.',
+      'Dashboard en tiempo real accesible para todo el equipo, con metas por persona.'
+    ]
+  },
+  {
+    axis: 1,
+    text: '¿Cómo se usan los resultados de calidad para mejorar la operación?',
+    opts: [
+      'No se usan para mejoras. Son archivos que se guardan.',
+      'Cuando el número es muy bajo, se hace una charla general al equipo.',
+      'Los desvíos generan planes de acción formales con seguimiento.',
+      'Ciclo cerrado: evaluación → feedback → capacitación → re-evaluación.',
+      'Calidad integrada a la estrategia: cada hallazgo alimenta mejoras de proceso, producto o script.'
+    ]
+  },
+  // 03 Reclamos & Cumplimiento
+  {
+    axis: 2,
+    text: '¿Cómo gestionás los reclamos formales de clientes?',
+    opts: [
+      'No hay proceso definido. Los reclamos se atienden como se puede.',
+      'Tenemos alguien que gestiona reclamos, pero sin SLA ni seguimiento formal.',
+      'Proceso de reclamos con SLA definido, registro y cierre documentado.',
+      'Gestión de reclamos con categorización, análisis de causa raíz y planes de mejora.',
+      'Sistema integrado de reclamos con resolución proactiva y mejora continua de procesos origen.'
+    ]
+  },
+  {
+    axis: 2,
+    text: '¿Cómo asegurás el cumplimiento regulatorio y normativo de tu operación?',
+    opts: [
+      'No tenemos proceso de cumplimiento. Reaccionamos ante multas o auditorías.',
+      'Sabemos que existen regulaciones, pero no hay seguimiento sistemático.',
+      'Checklist de cumplimiento con revisión periódica y responsable asignado.',
+      'Programa de cumplimiento con monitoreo continuo, capacitación y auditorías internas.',
+      'Compliance integrado a la operación: alertas automáticas, trazabilidad completa y auditorías externas.'
+    ]
+  },
+  {
+    axis: 2,
+    text: '¿Medís la reincidencia de reclamos o problemas similares?',
+    opts: [
+      'No. Cada reclamo se trata como un hecho aislado.',
+      'Sabemos cuáles son los reclamos más frecuentes, pero no medimos reincidencia.',
+      'Registro de reclamos con categorización que permite identificar patrones.',
+      'KPI de reincidencia con análisis de tendencia y acciones preventivas.',
+      'Modelo predictivo que anticipa reclamos antes de que escalen, con intervención proactiva.'
+    ]
+  },
+  {
+    axis: 2,
+    text: '¿Los reclamos y quejas retroalimentan la mejora del proceso o producto?',
+    opts: [
+      'No. Se resuelven y se archivan.',
+      'A veces se menciona en reuniones, pero no hay proceso formal.',
+      'Los reclamos frecuentes generan revisiones de proceso trimestrales.',
+      'Circuito formal de retroalimentación: reclamos → análisis → mejora documentada.',
+      'Los reclamos son la principal fuente de mejora continua: ciclo semanal de análisis y acción.'
+    ]
+  },
+  // 04 Performance & Gestión Económica
+  {
+    axis: 3,
+    text: '¿Cómo hacés seguimiento de los indicadores clave de performance operativa?',
+    opts: [
+      'No hay indicadores formales. Sabemos cómo nos fue por intuición.',
+      'Miramos algunos números en el sistema cuando hay problemas.',
+      'Dashboard operativo con KPIs clave revisado en reuniones semanales.',
+      'Scorecard operativo con metas por canal, proveedor y período, revisión diaria.',
+      'Torre de control en tiempo real con alertas automáticas y decisiones basadas en datos.'
+    ]
+  },
+  {
+    axis: 3,
+    text: '¿Cómo gestionás el presupuesto del área de atención al cliente?',
+    opts: [
+      'No tenemos visibilidad del presupuesto. Se gasta lo que se necesita.',
+      'Sabemos el presupuesto anual pero no hacemos seguimiento mensual formal.',
+      'Seguimiento mensual de ejecución presupuestaria con análisis de desvíos.',
+      'Gestión económica integrada: costo por contacto, costo por resolución y benchmarks.',
+      'Modelo de gestión económica predictivo con optimización continua de la relación costo-servicio.'
+    ]
+  },
+  {
+    axis: 3,
+    text: '¿Cómo medís y gestionás la productividad a nivel individual?',
+    opts: [
+      'No medimos productividad individual. Solo vemos resultados globales.',
+      'Los supervisores tienen percepción de quién rinde más, pero no hay datos formales.',
+      'Métricas de productividad por persona con revisión mensual.',
+      'Gestión por cuartiles de performance con planes diferenciados por segmento.',
+      'Sistema de gestión individual integrado: métricas, coaching, plan de desarrollo y compensación.'
+    ]
+  },
+  {
+    axis: 3,
+    text: '¿Cómo están vinculados los resultados de performance con la compensación o incentivos?',
+    opts: [
+      'No hay vínculo. La compensación es fija independientemente del resultado.',
+      'Hay bonos, pero los criterios no están del todo claros ni son consistentes.',
+      'Esquema de incentivos definido, comunicado y medido con reglas claras.',
+      'Incentivos diferenciados por rol, canal y objetivos estratégicos del período.',
+      'Sistema de compensación variable dinámico, alineado con NPS, eficiencia y metas de negocio.'
+    ]
+  },
+  // 05 Datos & Reporting
+  {
+    axis: 4,
+    text: '¿Cómo generás los reportes operativos de tu área?',
+    opts: [
+      'Manualmente, con Excel, cada vez que alguien los pide.',
+      'Tenemos plantillas de Excel que se actualizan periódicamente.',
+      'Reportes automáticos programados con distribución regular a los stakeholders.',
+      'Dashboards en herramientas de BI (Power BI, Looker) accesibles sin pedido.',
+      'Reporting en tiempo real integrado con los sistemas fuente, sin intervención humana.'
+    ]
+  },
+  {
+    axis: 4,
+    text: '¿Qué tan confiables y consistentes son los datos con los que trabajás?',
+    opts: [
+      'Los datos son inconsistentes. Cada sistema dice algo diferente.',
+      'Hay una fuente "oficial" pero no siempre es confiable. Se discute la veracidad.',
+      'Tenemos una fuente única de verdad para los KPIs principales.',
+      'Gobernanza de datos formal: definición de métricas, propietarios y auditoría periódica.',
+      'Data quality integrada: validación automática, linaje de datos y SLA de disponibilidad.'
+    ]
+  },
+  {
+    axis: 4,
+    text: '¿Quién tiene acceso a los datos e indicadores de la operación?',
+    opts: [
+      'Solo quien los genera. El resto pide el dato cuando lo necesita.',
+      'Los supervisores tienen acceso a algunos reportes básicos.',
+      'Gerentes y supervisores tienen dashboards con los KPIs de su área.',
+      'Acceso diferenciado por rol con vistas específicas para cada nivel de la organización.',
+      'Cultura data-driven: todos los niveles tienen acceso y capacidad de interpretar sus métricas.'
+    ]
+  },
+  {
+    axis: 4,
+    text: '¿Cómo usás los datos para tomar decisiones operativas?',
+    opts: [
+      'Las decisiones se toman por experiencia o intuición, con datos como referencia posterior.',
+      'Miramos los datos antes de decidir, pero no hay un proceso formal.',
+      'Reuniones de decisión estructuradas con datos como base del análisis.',
+      'Ciclos de toma de decisión formalizados (WBR/MBR) con análisis de causas y efectos.',
+      'Decisiones operativas automáticas basadas en reglas y modelos predictivos, con supervisión humana.'
+    ]
+  },
+  // 06 Liderazgo & Autonomía
+  {
+    axis: 5,
+    text: '¿Cómo funciona tu equipo cuando vos no estás presente?',
+    opts: [
+      'Las decisiones se paralizan. Todo espera hasta que yo aparezca.',
+      'El equipo gestiona lo rutinario, pero cualquier desvío requiere mi intervención.',
+      'El equipo maneja la operación normal y escala solo los problemas graves.',
+      'El equipo es autónomo en el 80% de las situaciones con criterios claros de escalamiento.',
+      'La operación funciona igual o mejor. El equipo toma decisiones estratégicas sin requerirme.'
+    ]
+  },
+  {
+    axis: 5,
+    text: '¿Cómo desarrollás las capacidades de las personas de tu equipo?',
+    opts: [
+      'No hay un programa de desarrollo formal. Se aprende haciendo.',
+      'Capacitaciones esporádicas cuando hay un problema concreto.',
+      'Plan de capacitación anual con evaluación de competencias.',
+      'Planes de desarrollo individualizados con metas, seguimiento y feedback estructurado.',
+      'Cultura de aprendizaje continuo: cada colaborador tiene un plan de carrera con mentoring activo.'
+    ]
+  },
+  {
+    axis: 5,
+    text: '¿Qué tan documentados están los procesos de tu área?',
+    opts: [
+      'Los procesos están en la cabeza de las personas. Nada está escrito.',
+      'Hay documentación desactualizada que nadie consulta.',
+      'Procesos clave documentados, accesibles y actualizados al menos una vez por año.',
+      'Documentación viva: los procesos se actualizan cuando cambian y se usan en onboarding.',
+      'Base de conocimiento integrada con procedimientos, ejemplos y casos que el equipo mejora continuamente.'
+    ]
+  },
+  {
+    axis: 5,
+    text: '¿Cómo lográs que las mejoras que implementás se sostengan en el tiempo?',
+    opts: [
+      'No se sostienen. Cada mejora dura hasta que cambia algo o alguien.',
+      'Dependemos de que las personas clave recuerden y apliquen lo nuevo.',
+      'Las mejoras se documentan, se comunican y tienen un responsable de seguimiento.',
+      'Ciclos de mejora con auditoría periódica, métricas de adopción y ajustes formales.',
+      'La mejora continua está institucionalizada: hay roles, procesos y cultura que la sostienen sin esfuerzo adicional.'
+    ]
+  }
+];
+
+const LEVELS = [
+  { name: 'Reactivo',   color: '#ef4444', desc: 'La operación depende de personas clave y reacciona a los problemas. Alto riesgo de caída ante ausencias o picos.' },
+  { name: 'Básico',     color: '#f97316', desc: 'Hay procesos elementales pero son inconsistentes. El conocimiento es informal y la mejora es oportunista.' },
+  { name: 'Gestionado', color: '#f59e0b', desc: 'La operación tiene estructura. Los indicadores se miden y los procesos son predecibles, aunque aún hay dependencia del liderazgo.' },
+  { name: 'Proactivo',  color: '#3b82f6', desc: 'La operación anticipa problemas, toma decisiones basadas en datos y el equipo opera con alta autonomía.' },
+  { name: 'Autónomo',   color: '#10b981', desc: 'La operación es un activo. Escala, aprende y mejora sola. El liderazgo se enfoca en estrategia, no en gestión operativa.' }
+];
+
+let answers = new Array(24).fill(null);
+let currentQ = 0;
+
+function startQuiz() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ(0);
+  window.scrollTo(0,0);
+}
+
+function renderQ(idx) {
+  currentQ = idx;
+  const q = QUESTIONS[idx];
+  const axis = AXES[q.axis];
+
+  document.getElementById('q-progress-text').textContent = `Pregunta ${idx+1} de 24`;
+  document.getElementById('q-progress-fill').style.width = `${((idx+1)/24)*100}%`;
+  document.getElementById('progress-bar').style.width = `${((idx+1)/24)*100}%`;
+
+  document.getElementById('q-axis-badge').textContent = axis.label + ' · ' + axis.name;
+  document.getElementById('q-num').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const optContainer = document.getElementById('q-options');
+  optContainer.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-option' + (answers[idx] === i ? ' selected' : '');
+    div.innerHTML = `<span class="opt-level">N${i+1}</span><span class="opt-text">${opt}</span>`;
+    div.addEventListener('click', () => selectOpt(i));
+    optContainer.appendChild(div);
+  });
+
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = answers[idx] === null;
+  document.getElementById('btn-next').textContent = idx === 23 ? 'Ver resultados →' : 'Siguiente →';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectOpt(i) {
+  answers[currentQ] = i;
+  document.querySelectorAll('.quiz-option').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQ() {
+  if (answers[currentQ] === null) return;
+  if (currentQ === 23) { showResults(); return; }
+  renderQ(currentQ + 1);
+}
+
+function prevQ() {
+  if (currentQ > 0) renderQ(currentQ - 1);
+}
+
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('progress-bar').style.width = '100%';
+
+  const axisScores = AXES.map((_, ai) => {
+    const qs = answers.filter((_, qi) => QUESTIONS[qi].axis === ai);
+    return (qs.reduce((s, v) => s + v + 1, 0) / qs.length);
+  });
+  const overall = axisScores.reduce((s,v) => s+v, 0) / 6;
+  const levelIdx = Math.min(Math.floor(overall) - 1, 4);
+  const level = LEVELS[Math.max(levelIdx, 0)];
+
+  document.getElementById('r-title').textContent = `Tu operación está en nivel ${(levelIdx+1)}: ${level.name}`;
+  const badge = document.getElementById('r-badge');
+  badge.textContent = level.name.toUpperCase();
+  badge.style.color = level.color;
+  badge.style.borderColor = level.color;
+  badge.style.background = level.color + '18';
+
+  document.getElementById('r-score-num').textContent = overall.toFixed(1);
+  document.getElementById('r-level-name').textContent = level.name;
+  document.getElementById('r-level-desc').textContent = level.desc;
+
+  document.getElementById('r-summary').textContent =
+    `Evaluaste 6 dimensiones clave de tu operación. Tu puntaje promedio es ${overall.toFixed(1)} sobre 5.0. ` +
+    `A continuación ves el detalle por eje para identificar dónde enfocar la mejora.`;
+
+  const axesContainer = document.getElementById('r-axes');
+  axesContainer.innerHTML = '';
+  axisScores.forEach((score, i) => {
+    const lvl = LEVELS[Math.min(Math.floor(score)-1, 4)];
+    const pct = (score / 5) * 100;
+    const colors = ['#ef4444','#f97316','#f59e0b','#3b82f6','#10b981'];
+    const color = colors[Math.min(Math.floor(score)-1, 4)];
+    axesContainer.innerHTML += `
+      <div class="axis-result-row">
+        <div class="axis-result-top">
+          <span class="axis-result-name">${AXES[i].label} · ${AXES[i].name}</span>
+          <span class="axis-result-score">${score.toFixed(1)} / 5.0</span>
+        </div>
+        <div class="axis-bar-track">
+          <div class="axis-bar-fill" style="width:0%;background:${color}" data-pct="${pct}"></div>
+        </div>
+        <span class="axis-result-level">Nivel ${Math.min(Math.floor(score), 5)}: ${lvl.name}</span>
+      </div>`;
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.axis-bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+
+  const weakest = AXES[axisScores.indexOf(Math.min(...axisScores))].name;
+  const waText = encodeURIComponent(
+    `Hola Gabriel, acabo de hacer el diagnóstico de madurez operativa de Feel The Data.\n\n` +
+    `Mi puntaje fue ${overall.toFixed(1)}/5.0 — Nivel: ${level.name}.\n` +
+    `Mi eje más débil es: ${weakest}.\n\nMe gustaría hablar sobre cómo mejorar.`
+  );
+  document.getElementById('wa-cta').href = `https://wa.me/51932900134?text=${waText}`;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  answers = new Array(24).fill(null);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('cover').style.display = 'block';
+  document.getElementById('progress-bar').style.width = '0%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
