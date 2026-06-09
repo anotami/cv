@@ -468,6 +468,7 @@
       <li><a href="#feelthedata">Feel The Data</a></li>
       <li><a href="#content">Artículos</a></li>
       <li><a href="#referencias">Referencias</a></li>
+      <li><a href="#agendar">Agendar</a></li>
       <li><a href="#contact" class="nav-cta">Contacto</a></li>
     </ul>
   </div>
@@ -1356,6 +1357,21 @@
   </div>
 </section>
 
+<!-- ── Agendar ── -->
+<section id="agendar">
+  <div class="container">
+    <div class="fade-in" style="margin-bottom: 48px;">
+      <p class="section-label">Reunámonos</p>
+      <h2 class="section-title">Agendá una llamada</h2>
+      <p class="section-desc">Seleccioná un horario disponible y reservá una reunión directamente. Recibirás una confirmación por email al instante.</p>
+    </div>
+    <div class="fade-in" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; min-height: 600px;">
+      <!-- Cal.com inline embed — reemplazá TU-USUARIO por tu username de cal.com -->
+      <div id="cal-embed" style="width:100%; height:100%; min-height:600px; overflow:scroll;"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Contact ── -->
 <section id="contact">
   <div class="container">
@@ -1461,6 +1477,48 @@
     sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
     navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : ''; });
   });
+</script>
+
+<!-- ── Cal.com embed ── -->
+<!-- PASO 1: Creá tu cuenta en https://cal.com y reemplazá TU-USUARIO/30min por tu link real -->
+<script>
+(function (C, A, L) {
+  let p = function (a, ar) { a.q.push(ar); };
+  let d = C.document;
+  C.Cal = C.Cal || function () {
+    let cal = C.Cal; let ar = arguments;
+    if (!cal.loaded) {
+      cal.ns = {}; cal.q = cal.q || [];
+      d.head.appendChild(d.createElement("script")).src = A;
+      cal.loaded = true;
+    }
+    if (ar[0] === L) {
+      const api = function () { p(api, arguments); };
+      const namespace = ar[1];
+      api.q = api.q || [];
+      if (typeof namespace === "string") {
+        cal.ns[namespace] = cal.ns[namespace] || api;
+        p(cal.ns[namespace], ar);
+        p(cal, ["initNamespace", namespace]);
+      } else p(cal, ar);
+      return;
+    }
+    p(cal, ar);
+  };
+})(window, "https://app.cal.com/embed/embed.js", "init");
+
+Cal("init", { origin: "https://cal.com" });
+
+Cal("inline", {
+  elementOrSelector: "#cal-embed",
+  calLink: "TU-USUARIO/30min",
+  layout: "month_view"
+});
+
+Cal("ui", {
+  theme: "dark",
+  styles: { branding: { brandColor: "#2563eb" } }
+});
 </script>
 
 <a href="https://wa.me/51932900134" target="_blank" rel="noopener" class="wa-float" aria-label="Enviar mensaje por WhatsApp">
