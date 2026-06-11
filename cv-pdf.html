@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV — Gabriel Pizarro García</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090e1a'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='30' font-weight='800' fill='%232563eb' text-anchor='middle'%3EGP%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', Arial, sans-serif; font-size: 12px; line-height: 1.5; color: #111; background: #fff; }
+
+    /* ── Print button (screen only) ── */
+    .print-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #090e1a; color: #fff; padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px;
+    }
+    .print-bar span { color: #6b7a9e; }
+    .print-bar button {
+      background: #2563eb; color: #fff; border: none; padding: 8px 20px;
+      border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .print-bar button:hover { background: #1d4ed8; }
+    @media print { .print-bar { display: none; } }
+
+    .page {
+      max-width: 800px; margin: 0 auto;
+      padding: 72px 40px 48px;
+    }
+    @media print {
+      .page { padding: 0 32px; max-width: 100%; }
+      body { font-size: 11px; }
+    }
+
+    /* ── Header ── */
+    .cv-header { border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 20px; }
+    .cv-name { font-size: 26px; font-weight: 800; color: #090e1a; letter-spacing: -.03em; }
+    .cv-title { font-size: 14px; color: #2563eb; font-weight: 600; margin-bottom: 8px; }
+    .cv-contact { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: #444; }
+    .cv-contact a { color: #444; text-decoration: none; }
+    .cv-stats { display: flex; gap: 24px; margin-top: 10px; flex-wrap: wrap; }
+    .cv-stat { text-align: center; }
+    .cv-stat .num { font-size: 18px; font-weight: 800; color: #2563eb; }
+    .cv-stat .lbl { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+
+    /* ── Section titles ── */
+    h2 {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: #2563eb; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px;
+      margin: 18px 0 10px;
+    }
+
+    /* ── Experience ── */
+    .exp-item { margin-bottom: 14px; break-inside: avoid; }
+    .exp-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .exp-title { font-size: 13px; font-weight: 700; color: #111; }
+    .exp-company { font-size: 12px; font-weight: 600; color: #2563eb; }
+    .exp-period { font-size: 11px; color: #666; white-space: nowrap; }
+    .exp-desc { font-size: 11.5px; color: #333; margin: 4px 0; }
+    .exp-bullets { padding-left: 16px; margin-top: 4px; }
+    .exp-bullets li { margin-bottom: 2px; font-size: 11px; color: #444; }
+    .sub-roles { margin: 6px 0 4px 0; }
+    .sub-role { font-size: 11px; color: #555; margin-bottom: 2px; }
+    .sub-role strong { color: #111; }
+
+    /* ── Projects ── */
+    .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .proj-item { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 12px; break-inside: avoid; }
+    .proj-name { font-size: 11.5px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .proj-desc { font-size: 10.5px; color: #555; line-height: 1.4; }
+    .proj-badge { font-size: 10px; color: #2563eb; font-weight: 600; margin-bottom: 2px; }
+
+    /* ── Skills ── */
+    .skills-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .skill-col { flex: 1; min-width: 140px; }
+    .skill-col h3 { font-size: 11px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .skill-tag { font-size: 10px; background: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 20px; }
+
+    /* ── Education ── */
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .edu-item { break-inside: avoid; }
+    .edu-name { font-size: 12px; font-weight: 700; color: #111; }
+    .edu-inst { font-size: 11px; color: #2563eb; }
+    .edu-year { font-size: 10px; color: #666; }
+
+    /* ── Certs ── */
+    .cert-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+    .cert-item { font-size: 11px; color: #333; padding: 2px 0; border-bottom: 1px solid #f3f4f6; }
+
+    /* ── Feel The Data ── */
+    .ftd-box { background: #f8faff; border: 1px solid #dbeafe; border-radius: 8px; padding: 12px 16px; }
+    .ftd-box p { font-size: 11px; color: #444; margin-bottom: 6px; }
+    .ftd-services { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .ftd-tag { font-size: 10px; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; }
+
+    /* ── Footer ── */
+    .cv-footer { margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 10px; display: flex; justify-content: space-between; font-size: 10px; color: #999; }
+  </style>
+</head>
+<body>
+
+<div class="print-bar">
+  <span>Gabriel Pizarro García · Curriculum Vitae</span>
+  <button onclick="window.print()">⬇ Descargar / Imprimir PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="cv-header">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;">
+      <div>
+        <div class="cv-name">Gabriel Pizarro García</div>
+        <div class="cv-title">Ejecutivo de Customer Experience &amp; Transformación Digital</div>
+        <div class="cv-contact">
+          <span>📍 Lima, Perú</span>
+          <a href="mailto:gabriel.pizarro.garcia@gmail.com">gabriel.pizarro.garcia@gmail.com</a>
+          <a href="https://wa.me/51932900134">+51 932 900 134</a>
+          <a href="https://linkedin.com/in/gabrielpizarro">linkedin.com/in/gabrielpizarro</a>
+          <a href="https://www.gabrielpizarro.com">gabrielpizarro.com</a>
+        </div>
+      </div>
+      <div class="cv-stats">
+        <div class="cv-stat"><div class="num">20+</div><div class="lbl">Años exp.</div></div>
+        <div class="cv-stat"><div class="num">3.500+</div><div class="lbl">Personas</div></div>
+        <div class="cv-stat"><div class="num">S/16M</div><div class="lbl">Ahorro/año</div></div>
+        <div class="cv-stat"><div class="num">7</div><div class="lbl">Países</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <h2>Perfil ejecutivo</h2>
+  <p style="font-size:11.5px;color:#333;line-height:1.6;">
+    Ejecutivo con 20+ años de trayectoria liderando operaciones de atención al cliente en las principales telcos y BPOs de Hispanoamérica. Especialista en CX de escala, Workforce Management e Inteligencia Artificial aplicada a operaciones. Combino visión estratégica, capacidad de ejecución y conocimiento técnico profundo para generar resultados medibles: reducción de S/16M en costos anuales, +15 pts de NPS, homologación de modelos operativos en 7 países y liderazgo de 40+ iniciativas de IA en ejecución simultánea. Abierto a roles de Dirección de CX, Transformación Digital y posiciones regionales.
+  </p>
+
+  <!-- EXPERIENCIA -->
+  <h2>Experiencia profesional</h2>
+
+  <div class="exp-item">
+    <div class="exp-header">
+      <div>
+        <div class="exp-title">Gerente de Atención al Cliente</div>
+        <div class="exp-company">Integratel Perú (Movistar)</div>
+      </div>
+      <div class="exp-period">Mar 2025 – Presente · Lima</div>
+    </div>
+    <div class="exp-desc">Dirección de la operación de atención al cliente de la principal telco del Perú. Conducción de 3.500+ personas en canales telefónicos, WhatsApp y redes sociales. Gobierno de 5 proveedores BPO simultáneos.</div>
+    <ul class="exp-bullets">
+      <li>Liderazgo de portafolio de 40+ iniciativas de IA y automatización en ejecución simultánea</li>
+      <li>Premio IA Demo Day: solución de transcripción y análisis masivo de llamadas (100 a 1.000+ automáticas)</li>
+      <li>Diseño e implementación de skill-based routing para plataforma técnica móvil</li>
+      <li>Sistema de analítica BPO con visibilidad a nivel agente para los 5 proveedores (9 meses histórico)</li>
+      <li>Gestión por cuartiles de performance y ciclos WBR para gobierno operativo continuo</li>
+    </ul>
+  </div>
+
+  <div class="exp-item">
+    <div class="exp-header">
+      <div>
+        <div class="exp-title">Múltiples roles de dirección</div>
+        <div class="exp-company">Movistar — Telefónica Hispam</div>
+      </div>
+      <div class="exp-period">Jun 2017 – Mar 2025 · Lima</div>
+    </div>
+    <div class="exp-desc">8 años de progresión sostenida: de planificación a dirección regional de CC en 7 países de Hispanoamérica.</div>
+    <div class="sub-roles">
+      <div class="sub-role"><strong>Gerente de Planificación Customer Care Hispam</strong> · Ene 2024 – Mar 2025</div>
+      <div class="sub-role"><strong>Gerente de Canales Telefónicos y Segunda Línea</strong> · Dic 2021 – Mar 2024</div>
+      <div class="sub-role"><strong>Gerente de Calidad y Eficiencia Operativa</strong> · Oct 2020 – Abr 2021</div>
+      <div class="sub-role"><strong>Jefe de Previsión y Gestión de Tráfico</strong> · Jun 2017 – Oct 2020</div>
+    </div>
+    <ul class="exp-bullets">
+      <li>Homologación de modelos operativos de CC en 7 países (Perú, Colombia, Chile, Argentina, Ecuador, Venezuela, Uruguay)</li>
+      <li>Diseño de frameworks de KPIs regionales y gobierno de proveedores BPO a escala</li>
+      <li>Responsable de presupuesto y control de costos de la dirección de Customer Care</li>
+      <li>Impulsor de adopción de herramientas digitales: IVR, speech analytics, chatbot</li>
+    </ul>
+  </div>
+
+  <div class="exp-item">
+    <div class="exp-header">
+      <div>
+        <div class="exp-title">Gerente de Control de Gestión y Planificación</div>
+        <div class="exp-company">Konecta</div>
+      </div>
+      <div class="exp-period">May 2013 – May 2017 · Lima</div>
+    </div>
+    <div class="exp-desc">Conducción de equipo de 60 personas: diagnóstico, planificación y control integral de la operación bajo estándares COPC.</div>
+    <ul class="exp-bullets">
+      <li>Planificación operativa de todos los clientes de la compañía</li>
+      <li>Pronóstico, scheduling, gestión en tiempo real y reportes ejecutivos</li>
+    </ul>
+  </div>
+
+  <div class="exp-item">
+    <div class="exp-header">
+      <div>
+        <div class="exp-title">Jefe de Control de Gestión → Líder de Equipo</div>
+        <div class="exp-company">Allus Global BPO Center</div>
+      </div>
+      <div class="exp-period">Abr 2004 – May 2013 · Argentina &amp; Perú</div>
+    </div>
+    <div class="exp-desc">Trayectoria completa de 9 años. Cuentas: Telecom Personal (Argentina). Medalla de Oro Allus · Mención Especial Jornadas de Innovación.</div>
+  </div>
+
+  <!-- PROYECTOS CLAVE -->
+  <h2>Proyectos clave</h2>
+  <div class="proj-grid">
+    <div class="proj-item">
+      <div class="proj-badge">Telefónica Hispam · 7 países · 2023–2024</div>
+      <div class="proj-name">Gestión Regional CC — Hispam</div>
+      <div class="proj-desc">Homologación de modelo operativo regional. Frameworks de coordinación, KPIs unificados y progresión MoM sostenida desde Nov 2023.</div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-badge">Premio IA Demo Day — Integratel</div>
+      <div class="proj-name">Sistema de Escucha y Análisis Masivo</div>
+      <div class="proj-desc">Transcripción y análisis de llamadas a escala (100–1.000+). Desarrollado con el equipo de calidad, en proceso de escalado transversal.</div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-badge">Power BI · Python · 5 BPOs</div>
+      <div class="proj-name">Analítica BPO — Nivel Agente</div>
+      <div class="proj-desc">Framework de performance a nivel agente individual. 9 meses de historial, segmentación por cuartil, plataforma y canal.</div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-badge">Multi-agent · LLM · AI Ops</div>
+      <div class="proj-name">VMO AI System — Arquitectura Multiagente</div>
+      <div class="proj-desc">Sistema de 8 agentes especializados para gestión integral de operaciones de CC: calidad, NPS, forecast, automatización y más.</div>
+    </div>
+  </div>
+
+  <!-- COMPETENCIAS -->
+  <h2>Competencias clave</h2>
+  <div class="skills-row">
+    <div class="skill-col">
+      <h3>Operaciones &amp; CX</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">CC multichannel</span><span class="skill-tag">BPO governance</span>
+        <span class="skill-tag">SLA management</span><span class="skill-tag">NPS / FCR</span>
+        <span class="skill-tag">OSIPTEL compliance</span>
+      </div>
+    </div>
+    <div class="skill-col">
+      <h3>Workforce Management</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Forecasting</span><span class="skill-tag">Capacity planning</span>
+        <span class="skill-tag">Scheduling</span><span class="skill-tag">Intraday management</span>
+      </div>
+    </div>
+    <div class="skill-col">
+      <h3>Datos &amp; IA</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Power BI</span><span class="skill-tag">Python</span>
+        <span class="skill-tag">AI Agents</span><span class="skill-tag">LLM integration</span>
+        <span class="skill-tag">Speech analytics</span>
+      </div>
+    </div>
+    <div class="skill-col">
+      <h3>Liderazgo</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Equipos grandes</span><span class="skill-tag">Stakeholders</span>
+        <span class="skill-tag">OKRs</span><span class="skill-tag">Transformación digital</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDUCACIÓN -->
+  <h2>Educación</h2>
+  <div class="edu-grid">
+    <div class="edu-item">
+      <div class="edu-name">Chief AI Officer Program <span style="font-size:10px;background:#dbeafe;color:#1d4ed8;padding:1px 6px;border-radius:10px;margin-left:4px;">En curso</span></div>
+      <div class="edu-inst">CENTRUM PUCP</div>
+      <div class="edu-year">Oct 2025 – Mar 2026 · Lima</div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-name">Global Management Programme</div>
+      <div class="edu-inst">IE Business School</div>
+      <div class="edu-year">2018 · Madrid, España</div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-name">Business Analytics</div>
+      <div class="edu-inst">UPC — Universidad Peruana de Ciencias Aplicadas</div>
+      <div class="edu-year">2017 · Lima</div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-name">Administración de Empresas</div>
+      <div class="edu-inst">Universidad Siglo 21</div>
+      <div class="edu-year">2011 · Argentina</div>
+    </div>
+  </div>
+
+  <!-- CERTIFICACIONES -->
+  <h2>Certificaciones</h2>
+  <div class="cert-list">
+    <div class="cert-item">COPC Implementation Leader ×2 — COPC Inc.</div>
+    <div class="cert-item">Scrum Master Certified (SMC) — SCRUMstudy</div>
+    <div class="cert-item">VoC + IA — Voz del Cliente con IA aplicada</div>
+    <div class="cert-item">AI Fluency Framework &amp; Foundations</div>
+    <div class="cert-item">COPC: Pronóstico, Planificación &amp; GTR — COPC Inc.</div>
+    <div class="cert-item">Claude 101 — IA generativa aplicada</div>
+  </div>
+
+  <!-- FEEL THE DATA -->
+  <h2>Feel The Data — Empresa propia</h2>
+  <div class="ftd-box">
+    <p><strong>Fundador &amp; Consultor Principal</strong> · Ene 2020 – Presente</p>
+    <p>Consultora especializada en contact centers: capacitaciones, auditoría operativa, consultoría de transformación e IA aplicada. Clientes en Telecomunicaciones, BPOs, Salud y Retail.</p>
+    <div class="ftd-services">
+      <span class="ftd-tag">Diagnóstico Express (2 semanas)</span>
+      <span class="ftd-tag">Programa de Transformación (3–6 meses)</span>
+      <span class="ftd-tag">Capacitación In-Company</span>
+      <span class="ftd-tag">Herramientas gratuitas de diagnóstico</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="cv-footer">
+    <span>Gabriel Pizarro García · Curriculum Vitae</span>
+    <span>gabrielpizarro.com · gabriel.pizarro.garcia@gmail.com · +51 932 900 134</span>
+  </div>
+
+</div>
+</body>
+</html>
