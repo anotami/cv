@@ -58,6 +58,9 @@
     }
     .role-card:hover { border-color: var(--gold); transform: translateY(-2px); background: rgba(245,158,11,.05); }
     .role-card.active { border-color: var(--gold); background: rgba(245,158,11,.08); }
+    .role-card.full { grid-column: 1 / -1; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.05); }
+    .role-card.full:hover { border-color: var(--green); background: rgba(16,185,129,0.1); }
+    .role-card.full.active { border-color: var(--green); background: rgba(16,185,129,0.12); }
     .role-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
     .role-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
     .role-sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
@@ -194,6 +197,14 @@
           <div class="role-name">Gerencia & Dirección</div>
           <div class="role-sub">Objetivos, revisión de resultados y gestión de proveedores</div>
           <div class="role-count">10 preguntas</div>
+        </div>
+      </div>
+      <div class="role-card full" data-role="completo">
+        <div class="role-icon">🏢</div>
+        <div>
+          <div class="role-name" style="color:var(--green)">Relevamiento de toda la operación</div>
+          <div class="role-sub">Evaluación integral: WFM, Supervisión, Calidad, RRHH y Gerencia — todas las áreas en un solo recorrido</div>
+          <div class="role-count" style="color:var(--green)">54 preguntas · 5 áreas</div>
         </div>
       </div>
     </div>
@@ -371,6 +382,15 @@ const ROLES = {
   }
 };
 
+// Build combined "completo" role dynamically from all individual roles
+ROLES.completo = {
+  name: 'Operación Completa',
+  icon: '🏢',
+  questions: ['wfm','lideres','calidad','rrhh','gerencia'].flatMap(key =>
+    ROLES[key].questions.map(q => ({ ...q, cat: ROLES[key].name + ' · ' + q.cat }))
+  )
+};
+
 const ANSWERS_KEY = ['cumple','proceso','nocumple','na'];
 const ANS_LABELS = { cumple: 'Cumple', proceso: 'En proceso', nocumple: 'No cumple', na: 'N/A' };
 
@@ -510,7 +530,7 @@ function showResults() {
   const gaps = qs.filter((_, i) => answers[i] === 'nocumple').map(q => '• ' + q.text).slice(0,5).join('\n');
   const waText = encodeURIComponent(
     `Hola Gabriel, acabo de hacer el Relevamiento Operativo de Feel The Data.\n\n` +
-    `Área evaluada: ${role.name}\n` +
+    `${selectedRole === 'completo' ? 'Evaluación: Operación Completa (todas las áreas)' : 'Área evaluada: ' + role.name}\n` +
     `Cumple: ${counts.cumple} | En proceso: ${counts.proceso} | No cumple: ${counts.nocumple}\n\n` +
     (gaps ? `Principales brechas:\n${gaps}\n\n` : '') +
     `Me gustaría hablar sobre cómo trabajar estas brechas.`
