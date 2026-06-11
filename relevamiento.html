@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relevamiento Operativo · FTD Feel The Data</title>
+  <meta name="description" content="Herramienta de relevamiento y auditoría operativa para contact centers. Diagnóstico por rol: WFM, Supervisión, Calidad, RRHH y Gerencia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #090e1a;
+      --bg2:       #0d1424;
+      --bg3:       #111827;
+      --surface:   #131c2e;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --text:      #f0f4ff;
+      --text2:     #c8d4f0;
+      --muted:     #6b7a9e;
+      --accent:    #2563eb;
+      --gold:      #f59e0b;
+      --green:     #10b981;
+      --red:       #ef4444;
+      --orange:    #f97316;
+      --mono:      'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; z-index: 100; background: linear-gradient(90deg, var(--gold), var(--green)); width: 0%; transition: width .3s; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+      background: rgba(9,14,26,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-weight: 800; font-size: 15px; text-decoration: none; color: var(--text); }
+    .nav-logo span { color: var(--gold); }
+    .nav-back { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-back:hover { color: var(--gold); }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .page { padding: 80px 0 60px; }
+
+    /* ── Cover ── */
+    .cover-label { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 24px; }
+    .cover-title { font-size: clamp(2rem,5vw,3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; margin-bottom: 20px; }
+    .cover-title span { color: var(--gold); }
+    .cover-desc { font-size: 1rem; color: var(--text2); max-width: 560px; line-height: 1.7; margin-bottom: 40px; }
+    .cover-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 40px; }
+    .role-card {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 22px; cursor: pointer;
+      transition: border-color .2s, transform .2s, background .2s;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .role-card:hover { border-color: var(--gold); transform: translateY(-2px); background: rgba(245,158,11,.05); }
+    .role-card.active { border-color: var(--gold); background: rgba(245,158,11,.08); }
+    .role-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+    .role-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .role-sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .role-count { font-family: var(--mono); font-size: 10px; color: var(--gold); margin-top: 6px; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold); color: #000; font-weight: 800; font-size: 15px;
+      padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer;
+      transition: transform .15s, box-shadow .15s; text-decoration: none;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,158,11,.35); }
+    .btn-primary:disabled { opacity: .4; cursor: default; transform: none; box-shadow: none; }
+
+    /* ── Assessment ── */
+    .assess-header { margin-bottom: 32px; }
+    .assess-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .assess-role-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,158,11,.12); border: 1px solid var(--gold);
+      border-radius: 6px; padding: 5px 14px;
+      font-family: var(--mono); font-size: 11px; color: var(--gold);
+    }
+    .assess-progress-text { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .progress-track { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 2px; transition: width .3s; }
+
+    .question-block { margin-bottom: 28px; }
+    .q-category { font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+    .q-text { font-size: 15px; font-weight: 600; line-height: 1.5; margin-bottom: 14px; }
+    .q-context { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; padding: 12px 16px; background: var(--bg3); border-radius: 8px; border-left: 3px solid var(--border2); }
+    .answer-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ans-btn {
+      padding: 8px 16px; border-radius: 7px; border: 1px solid var(--border2);
+      background: var(--bg3); color: var(--text2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .15s;
+    }
+    .ans-btn:hover { border-color: var(--gold); }
+    .ans-btn.sel-cumple    { background: rgba(16,185,129,.15); border-color: var(--green); color: var(--green); }
+    .ans-btn.sel-proceso   { background: rgba(245,158,11,.12); border-color: var(--gold); color: var(--gold); }
+    .ans-btn.sel-nocumple  { background: rgba(239,68,68,.12); border-color: var(--red); color: var(--red); }
+    .ans-btn.sel-na        { background: rgba(107,122,158,.12); border-color: var(--muted); color: var(--muted); }
+
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
+    .btn-sec { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); padding: 10px 22px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: border-color .15s; }
+    .btn-sec:hover { border-color: var(--gold); }
+    .btn-sec:disabled { opacity: .3; cursor: default; }
+
+    /* ── Results ── */
+    .results-header { margin-bottom: 40px; }
+    .results-title { font-size: clamp(1.6rem,4vw,2.4rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+    .results-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    .score-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 40px; }
+    .score-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 18px; text-align: center; }
+    .score-num { font-size: 1.8rem; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .score-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    .findings-section { margin-bottom: 36px; }
+    .findings-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .finding-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+    .finding-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .finding-text { font-size: 13.5px; color: var(--text2); line-height: 1.5; }
+    .finding-cat { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+    .cta-box { background: #1a1200; border: 2px solid var(--gold); border-radius: 16px; padding: 36px; text-align: center; }
+    .cta-box h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
+    .cta-box p { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+    .btn-wa { display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #fff; font-weight: 700; font-size: 14px; padding: 13px 28px; border-radius: 8px; text-decoration: none; margin-right: 12px; }
+    .btn-restart { display: inline-flex; align-items: center; gap: 8px; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-weight: 600; font-size: 14px; padding: 13px 24px; border-radius: 8px; cursor: pointer; text-decoration: none; }
+
+    footer { border-top: 1px solid var(--border); padding: 28px 0; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    footer a { color: var(--gold); text-decoration: none; }
+    .hidden { display: none !important; }
+    @media (max-width: 600px) {
+      .cover-roles { grid-template-columns: 1fr; }
+      .score-row { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <a href="../index.html" class="nav-logo">FTD<span>.</span></a>
+  <a href="../index.html#feelthedata" class="nav-back">← Volver al sitio</a>
+</nav>
+
+<!-- ── Cover ── -->
+<div id="screen-cover" class="page">
+  <div class="container">
+    <p class="cover-label">Herramienta de auditoría · Feel The Data</p>
+    <h1 class="cover-title">Relevamiento<br /><span>Operativo</span></h1>
+    <p class="cover-desc">Guía de diagnóstico estructurado para auditar el estado operativo de un contact center por área. Seleccioná el rol a evaluar y respondé las preguntas clave — obtenés un mapa de brechas listo para trabajar.</p>
+
+    <div class="cover-roles" id="role-selector">
+      <div class="role-card" data-role="wfm">
+        <div class="role-icon">📐</div>
+        <div>
+          <div class="role-name">WFM & Planificación</div>
+          <div class="role-sub">Pronóstico, capacidad, programación y gestión en tiempo real</div>
+          <div class="role-count">12 preguntas</div>
+        </div>
+      </div>
+      <div class="role-card" data-role="lideres">
+        <div class="role-icon">👥</div>
+        <div>
+          <div class="role-name">Supervisión & Líderes</div>
+          <div class="role-sub">Objetivos, monitoreo, coaching y gestión del equipo</div>
+          <div class="role-count">12 preguntas</div>
+        </div>
+      </div>
+      <div class="role-card" data-role="calidad">
+        <div class="role-icon">🔍</div>
+        <div>
+          <div class="role-name">Calidad</div>
+          <div class="role-sub">Proceso de monitoreo, calibración y mejora continua</div>
+          <div class="role-count">10 preguntas</div>
+        </div>
+      </div>
+      <div class="role-card" data-role="rrhh">
+        <div class="role-icon">🎓</div>
+        <div>
+          <div class="role-name">RRHH & Formación</div>
+          <div class="role-sub">Reclutamiento, capacitación y verificación de habilidades</div>
+          <div class="role-count">10 preguntas</div>
+        </div>
+      </div>
+      <div class="role-card" data-role="gerencia">
+        <div class="role-icon">🎯</div>
+        <div>
+          <div class="role-name">Gerencia & Dirección</div>
+          <div class="role-sub">Objetivos, revisión de resultados y gestión de proveedores</div>
+          <div class="role-count">10 preguntas</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-start" disabled onclick="startAssessment()">Iniciar relevamiento →</button>
+  </div>
+</div>
+
+<!-- ── Assessment ── -->
+<div id="screen-assess" class="page hidden">
+  <div class="container">
+    <div class="assess-header">
+      <div class="assess-meta">
+        <div class="assess-role-badge" id="role-badge"></div>
+        <span class="assess-progress-text" id="q-counter"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="q-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="questions-container"></div>
+    <div class="nav-row">
+      <button class="btn-sec" id="btn-prev" onclick="prevPage()">← Anterior</button>
+      <button class="btn-primary" id="btn-next" onclick="nextPage()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="screen-results" class="page hidden">
+  <div class="container">
+    <div class="results-header">
+      <p class="cover-label" id="r-role-label"></p>
+      <h2 class="results-title" id="r-title"></h2>
+      <p class="results-sub" id="r-sub"></p>
+    </div>
+
+    <div class="score-row">
+      <div class="score-card">
+        <div class="score-num" style="color:var(--green)" id="r-cumple">0</div>
+        <div class="score-lbl">Cumple</div>
+      </div>
+      <div class="score-card">
+        <div class="score-num" style="color:var(--gold)" id="r-proceso">0</div>
+        <div class="score-lbl">En proceso</div>
+      </div>
+      <div class="score-card">
+        <div class="score-num" style="color:var(--red)" id="r-nocumple">0</div>
+        <div class="score-lbl">No cumple</div>
+      </div>
+      <div class="score-card">
+        <div class="score-num" style="color:var(--muted)" id="r-na">0</div>
+        <div class="score-lbl">N/A</div>
+      </div>
+    </div>
+
+    <div class="findings-section">
+      <div class="findings-title" style="color:var(--red)">⚠ Brechas identificadas</div>
+      <div id="r-gaps"></div>
+    </div>
+
+    <div class="findings-section">
+      <div class="findings-title" style="color:var(--gold)">⏳ En desarrollo</div>
+      <div id="r-proceso-list"></div>
+    </div>
+
+    <div class="findings-section">
+      <div class="findings-title" style="color:var(--green)">✓ Fortalezas</div>
+      <div id="r-ok-list"></div>
+    </div>
+
+    <div class="cta-box">
+      <h3>¿Querés trabajar estas brechas?</h3>
+      <p>Feel The Data diseña planes de acción específicos para cada brecha identificada. Compartí estos resultados y coordinamos una sesión de trabajo.</p>
+      <a class="btn-wa" id="r-wa" href="#" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Compartir resultados
+      </a>
+      <a class="btn-restart" onclick="restart()">↺ Nuevo relevamiento</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="../index.html">Gabriel Pizarro García</a> · <a href="../index.html#feelthedata">Feel The Data</a> · Relevamiento Operativo v1
+  </div>
+</footer>
+
+<script>
+const ROLES = {
+  wfm: {
+    name: 'WFM & Planificación',
+    icon: '📐',
+    questions: [
+      { cat: 'Pronóstico', text: '¿Se genera un pronóstico formal de volumen de demanda?', ctx: 'Verificar que exista un proceso documentado de forecast, con fuente de datos definida y responsable asignado.' },
+      { cat: 'Pronóstico', text: '¿El pronóstico se realiza con apertura por intervalo (30 min), diaria, semanal y mensual?', ctx: 'El pronóstico debe existir en distintos horizontes temporales para permitir diferentes tipos de planificación.' },
+      { cat: 'Pronóstico', text: '¿Se mide y gestiona la precisión del pronóstico? ¿Hay objetivo definido?', ctx: 'Solicitar resultados de precisión de los últimos 3 meses. Verificar fórmula de cálculo y objetivo vigente.' },
+      { cat: 'Pronóstico', text: '¿Se incorporan eventos futuros al pronóstico (campañas, estacionalidad, cambios de negocio)?', ctx: 'Indagar si existe comunicación con áreas de Marketing, Ventas u otras que generen variaciones en la demanda.' },
+      { cat: 'Planificación', text: '¿Existe un modelo de planificación de capacidad que determine la dotación necesaria?', ctx: 'Verificar que se use un modelo cuantitativo con objetivo de nivel de servicio, TMO y reductores como inputs.' },
+      { cat: 'Planificación', text: '¿Los reductores (ausencias, capacitación, break) se calculan y se usan en la planificación?', ctx: 'Solicitar planillas de cálculo de reductores. Verificar que los valores sean reales y no solo el objetivo.' },
+      { cat: 'Programación', text: '¿Se realizan programaciones de turnos con criterios definidos y documentados?', ctx: 'Verificar que las programaciones minimicen el sobre y sub dimensionamiento. Pedir la última programación realizada.' },
+      { cat: 'Programación', text: '¿Las programaciones se comunican con la anticipación suficiente al equipo operativo?', ctx: 'Contrastar con líderes la anticipación real con que reciben los horarios y si hay cambios frecuentes.' },
+      { cat: 'Gestión en tiempo real', text: '¿Existe un proceso de gestión en tiempo real (GTR) cuando los resultados se desvían del plan?', ctx: 'Verificar que se tomen acciones cuantitativas —no sólo intuitivas— cuando el volumen o el TMO se desvían.' },
+      { cat: 'Gestión en tiempo real', text: '¿Se mide y gestiona la adhesión a la programación por intervalo?', ctx: 'Solicitar fórmula y resultados de adhesión. Verificar acciones cuando está baja o alta.' },
+      { cat: 'Replanificación', text: '¿Cuándo el plan del día es inconsistente con la realidad, se re-planifica activamente?', ctx: 'Indagar qué pasa cuando hay más ausentismo del previsto o picos de demanda no pronosticados.' },
+      { cat: 'Replanificación', text: '¿Existen protocolos de contingencia documentados ante caídas de sistema o eventos excepcionales?', ctx: 'Pedir el protocolo y verificar cuándo fue la última vez que se aplicó. Contrastar con lo que dicen los líderes.' },
+    ]
+  },
+  lideres: {
+    name: 'Supervisión & Líderes',
+    icon: '👥',
+    questions: [
+      { cat: 'Objetivos', text: '¿El líder conoce sus objetivos, las fórmulas de cálculo y el estado actual de cada uno?', ctx: 'Pedir que muestre los resultados de sus métricas en el momento. Verificar que pueda explicar cómo se calculan.' },
+      { cat: 'Objetivos', text: '¿Cuándo un objetivo no se cumple, existen acciones basadas en análisis de causa raíz?', ctx: 'Solicitar un ejemplo de acción reciente. Verificar que no sea solo una charla general sino una intervención dirigida.' },
+      { cat: 'Gestión del equipo', text: '¿El líder identifica cuáles son sus asesores con mejor y peor desempeño, y gestiona esa variación?', ctx: 'Preguntar quién es el asesor que más necesita apoyo y qué acciones concretas está tomando con él.' },
+      { cat: 'Gestión del equipo', text: '¿Se usan cuartiles u otro sistema de segmentación para priorizar la gestión por asesor?', ctx: 'Verificar que el tablero del líder permita identificar segmentos de performance y no solo promedios globales.' },
+      { cat: 'Monitoreo', text: '¿El líder realiza monitoreos de interacciones con la frecuencia requerida?', ctx: 'Solicitar evidencias de los últimos monitoreos. Verificar que se cumpla la cuota tanto para asesores nuevos como en curso.' },
+      { cat: 'Monitoreo', text: '¿Los resultados del monitoreo se comunican al asesor con feedback documentado?', ctx: 'Verificar que el feedback sea individual, concreto y registrado. Pedir un ejemplo de devolución reciente.' },
+      { cat: 'Calibración', text: '¿El líder participa de sesiones de calibración? ¿Con qué frecuencia?', ctx: 'Si no calibran, preguntar qué hacen para asegurar consistencia en la evaluación entre distintos supervisores.' },
+      { cat: 'Programación', text: '¿El líder recibe las programaciones con anticipación suficiente y gestiona los cambios de turno?', ctx: 'Indagar cómo maneja ausencias con y sin aviso, y si puede otorgar permisos sin consultarlo con otro nivel.' },
+      { cat: 'Formación', text: '¿Los nuevos asesores ingresan con el nivel de conocimiento mínimo necesario para el puesto?', ctx: 'Preguntar si la última camada cumplió las expectativas y qué le falta al proceso de capacitación inicial.' },
+      { cat: 'Formación', text: '¿Existen capacitaciones de actualización y se verifica que el conocimiento se haya incorporado?', ctx: 'Preguntar cuál fue la última capacitación y si se tomó algún examen o verificación posterior.' },
+      { cat: 'Satisfacción', text: '¿El líder gestiona los resultados de satisfacción del cliente a nivel individual por asesor?', ctx: 'Solicitar evidencias de acciones tomadas a partir de resultados de satisfacción. Verificar análisis de causa raíz.' },
+      { cat: 'Contingencia', text: '¿El líder sabe qué hacer ante una caída de sistema o evento excepcional?', ctx: 'Preguntar por el último incidente que recuerda y cómo actuó. Verificar consistencia con otros líderes del equipo.' },
+    ]
+  },
+  calidad: {
+    name: 'Calidad',
+    icon: '🔍',
+    questions: [
+      { cat: 'Proceso de monitoreo', text: '¿Existe un proceso formal de monitoreo de interacciones con grilla definida y cuotas establecidas?', ctx: 'Solicitar la planilla de monitoreo, las cuotas por evaluador y los resultados de los últimos 3 meses.' },
+      { cat: 'Proceso de monitoreo', text: '¿Se cumple la cuota de monitoreos? ¿Hay seguimiento de la adhesión al proceso?', ctx: 'Verificar que exista un tablero de seguimiento. Preguntar qué pasa cuando un evaluador no cumple la cuota.' },
+      { cat: 'Calibración', text: '¿Se realizan sesiones de calibración entre evaluadores? ¿Con qué frecuencia?', ctx: 'Si el resultado de la calibración es bajo, verificar que los evaluadores sigan monitoreando con refuerzo.' },
+      { cat: 'Calibración', text: '¿Qué pasa cuando un evaluador está descalibrado? ¿Hay un proceso de re-calibración?', ctx: 'Pedir resultados de calibración de los últimos 6 meses. Verificar si hubo cambios en la metodología de monitoreo.' },
+      { cat: 'Feedback y mejora', text: '¿Los resultados del monitoreo se devuelven al asesor con feedback concreto y documentado?', ctx: 'Solicitar un ejemplo de devolución reciente. Verificar que el feedback sea individual y no solo comunicado en grupo.' },
+      { cat: 'Feedback y mejora', text: '¿Los errores detectados generan planes de acción formales con seguimiento?', ctx: 'Pedir un caso de corrección exitoso y uno que no funcionó. Analizar el proceso de causa raíz usado.' },
+      { cat: 'Análisis', text: '¿Se analizan los principales motivos de error y se hace seguimiento de tendencias?', ctx: 'Solicitar el análisis de los errores más frecuentes de los últimos 3 meses y las acciones implementadas.' },
+      { cat: 'Análisis', text: '¿Los resultados de calidad correlacionan con satisfacción del cliente y otros indicadores de negocio?', ctx: 'Verificar que el área de calidad tenga visibilidad de NPS/CSAT y que analice la relación entre ambos.' },
+      { cat: 'Gestión de asesores nuevos', text: '¿Se analizan los resultados de calidad de asesores recién ingresados de forma diferenciada?', ctx: 'Verificar si los nuevos tienen mayor frecuencia de monitoreo y si sus resultados se comparan con los del resto.' },
+      { cat: 'Proceso de detección', text: '¿Cuando se detecta un desvío en el proceso de atención, hay un circuito claro de corrección?', ctx: 'Preguntar quién es el responsable de escalar un desvío y qué áreas se involucran en la corrección.' },
+    ]
+  },
+  rrhh: {
+    name: 'RRHH & Formación',
+    icon: '🎓',
+    questions: [
+      { cat: 'Reclutamiento', text: '¿Existen perfiles de puesto definidos para cada rol? ¿Se usan en el proceso de selección?', ctx: 'Solicitar el perfil de al menos un rol. Verificar que las entrevistas incluyan validación de los requisitos del perfil.' },
+      { cat: 'Reclutamiento', text: '¿Existen métricas del proceso de reclutamiento (tiempo, precisión, calidad)?', ctx: 'Solicitar resultados de los últimos 3 procesos: cantidad solicitada vs. incorporada, tiempos de cada etapa.' },
+      { cat: 'Reclutamiento', text: '¿El área operativa se entera con tiempo suficiente del inicio de un proceso de reclutamiento?', ctx: 'Indagar si existen SLAs internos y si hay trabas frecuentes entre RRHH y operaciones.' },
+      { cat: 'Capacitación inicial', text: '¿Existe un programa de capacitación inicial definido, con contenidos documentados y responsable asignado?', ctx: 'Solicitar el programa de la última capacitación, notas de evaluación y porcentaje de aprobación.' },
+      { cat: 'Capacitación inicial', text: '¿Se aplica un examen o verificación de habilidades al finalizar la capacitación? ¿Qué pasa si no se aprueba?', ctx: 'Verificar que el umbral de aprobación esté vinculado a las habilidades mínimas del puesto y no sea arbitrario.' },
+      { cat: 'Capacitación inicial', text: '¿Los resultados de la capacitación correlacionan con el desempeño en los primeros meses?', ctx: 'Pedir correlación entre nota de capacitación y resultados operativos del primer mes del asesor.' },
+      { cat: 'Capacitación continua', text: '¿Existen procesos de recapacitación cuando se detectan cambios en productos, procesos o resultados bajos?', ctx: 'Preguntar quién detecta la necesidad y cómo se comunica. Solicitar evidencia de la última recapacitación.' },
+      { cat: 'Capacitación continua', text: '¿Se verifica que los asesores incorporaron el contenido de las actualizaciones?', ctx: 'Verificar si se toman evaluaciones post-capacitación y qué acciones se toman con quienes no aprueban.' },
+      { cat: 'Formadores', text: '¿Los capacitadores tienen verificada su habilidad para enseñar el contenido que dictan?', ctx: 'Solicitar evidencia de la última verificación de habilidades de los formadores. Revisar resultados por capacitador.' },
+      { cat: 'Métricas RRHH', text: '¿Se comunican las métricas de RRHH (puntualidad, calidad del reclutamiento, precisión) a las áreas operativas?', ctx: 'Verificar con qué frecuencia y a través de qué canal se comunican los resultados a operaciones.' },
+    ]
+  },
+  gerencia: {
+    name: 'Gerencia & Dirección',
+    icon: '🎯',
+    questions: [
+      { cat: 'Objetivos', text: '¿La gerencia conoce en detalle los requisitos del contrato/acuerdo de servicio y los ha bajado a su equipo?', ctx: 'Verificar que el equipo conozca qué métricas son penalizables o bonificables y qué impacto tienen.' },
+      { cat: 'Objetivos', text: '¿Existe un proceso claro para comunicar cambios en los requisitos con la anticipación suficiente?', ctx: 'Preguntar por la última vez que cambiaron los objetivos y con cuánta anticipación se comunicaron.' },
+      { cat: 'Revisión de resultados', text: '¿Hay reuniones formales de revisión de performance? ¿Con qué frecuencia, quiénes participan y qué se decide?', ctx: 'Solicitar la última presentación de resultados. Verificar que se generen acuerdos con seguimiento.' },
+      { cat: 'Revisión de resultados', text: '¿La gerencia tiene visibilidad del estado de todas las métricas clave a nivel diario, semanal y mensual?', ctx: 'Pedir el tablero de gestión y analizar qué información miran y con qué frecuencia.' },
+      { cat: 'Gestión de problemas', text: '¿Cuáles son las métricas más desviadas hoy? ¿Existen planes de acción formales para cada una?', ctx: 'Verificar que los planes de acción estén basados en análisis de causa raíz y no solo en acciones genéricas.' },
+      { cat: 'Satisfacción', text: '¿Se mide la satisfacción del cliente? ¿Cómo se gestiona cuando está por debajo del objetivo?', ctx: 'Solicitar resultados de los últimos 3 meses y las acciones implementadas para mejorar la satisfacción.' },
+      { cat: 'Satisfacción', text: '¿Las quejas frecuentes de los clientes se analizan y generan mejoras en el proceso?', ctx: 'Verificar si hay un circuito formal de retroalimentación desde las quejas hacia mejoras de proceso.' },
+      { cat: 'Implementaciones', text: '¿Las nuevas implementaciones (campañas, cambios de proceso, nuevos grupos) se planifican con tiempo suficiente?', ctx: 'Pedir el cronograma de la última implementación. Analizar si los plazos fueron respetados y qué falló.' },
+      { cat: 'Gestión de proveedores', text: '¿Existe un proceso de revisión de performance de proveedores con periodicidad definida?', ctx: 'Verificar que haya instancias formales de revisión con los proveedores, con acuerdos documentados.' },
+      { cat: 'Gestión de proveedores', text: '¿Los proveedores conocen los requisitos y se gestionan penalizaciones o bonificaciones?', ctx: 'Preguntar si alguna vez se aplicó una penalización y cómo fue el proceso.' },
+    ]
+  }
+};
+
+const ANSWERS_KEY = ['cumple','proceso','nocumple','na'];
+const ANS_LABELS = { cumple: 'Cumple', proceso: 'En proceso', nocumple: 'No cumple', na: 'N/A' };
+
+let selectedRole = null;
+let answers = {};
+let currentPage = 0;
+const PAGE_SIZE = 4;
+
+// Role selection
+document.querySelectorAll('.role-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    selectedRole = card.dataset.role;
+    document.getElementById('btn-start').disabled = false;
+  });
+});
+
+function startAssessment() {
+  answers = {};
+  currentPage = 0;
+  show('screen-assess');
+  renderPage();
+}
+
+function show(id) {
+  ['screen-cover','screen-assess','screen-results'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPage() {
+  const role = ROLES[selectedRole];
+  const qs = role.questions;
+  const total = qs.length;
+  const start = currentPage * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, total);
+  const pageQs = qs.slice(start, end);
+
+  // Header
+  document.getElementById('role-badge').textContent = role.icon + ' ' + role.name;
+  document.getElementById('q-counter').textContent = `Preguntas ${start+1}–${end} de ${total}`;
+  document.getElementById('q-fill').style.width = ((end / total) * 100) + '%';
+  document.getElementById('progress-bar').style.width = ((end / total) * 100) + '%';
+
+  // Questions
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  pageQs.forEach((q, i) => {
+    const idx = start + i;
+    const saved = answers[idx] || null;
+    container.innerHTML += `
+      <div class="question-block">
+        <div class="q-category">${q.cat}</div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-context">${q.ctx}</div>
+        <div class="answer-row" id="ans-${idx}">
+          ${ANSWERS_KEY.map(k => `<button class="ans-btn ${saved === k ? 'sel-'+k : ''}" onclick="selectAnswer(${idx},'${k}')">${ANS_LABELS[k]}</button>`).join('')}
+        </div>
+      </div>
+      ${i < pageQs.length - 1 ? '<div class="divider"></div>' : ''}
+    `;
+  });
+
+  document.getElementById('btn-prev').disabled = currentPage === 0;
+  const isLast = end >= total;
+  document.getElementById('btn-next').textContent = isLast ? 'Ver resultados →' : 'Siguiente →';
+  updateNextBtn();
+}
+
+function selectAnswer(idx, key) {
+  answers[idx] = key;
+  const row = document.getElementById('ans-' + idx);
+  row.querySelectorAll('.ans-btn').forEach(btn => {
+    ANSWERS_KEY.forEach(k => btn.classList.remove('sel-'+k));
+  });
+  row.querySelectorAll('.ans-btn').forEach((btn, i) => {
+    if (ANSWERS_KEY[i] === key) btn.classList.add('sel-' + key);
+  });
+  updateNextBtn();
+}
+
+function updateNextBtn() {
+  const role = ROLES[selectedRole];
+  const qs = role.questions;
+  const start = currentPage * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, qs.length);
+  const allAnswered = Array.from({length: end - start}, (_,i) => answers[start+i]).every(v => v);
+  document.getElementById('btn-next').disabled = !allAnswered;
+}
+
+function nextPage() {
+  const role = ROLES[selectedRole];
+  const total = role.questions.length;
+  const end = Math.min((currentPage + 1) * PAGE_SIZE, total);
+  if (end >= total) { showResults(); return; }
+  currentPage++;
+  renderPage();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevPage() {
+  if (currentPage > 0) { currentPage--; renderPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+}
+
+function showResults() {
+  const role = ROLES[selectedRole];
+  const qs = role.questions;
+
+  const counts = { cumple: 0, proceso: 0, nocumple: 0, na: 0 };
+  qs.forEach((_, i) => { if (answers[i]) counts[answers[i]]++; });
+
+  document.getElementById('r-role-label').textContent = role.icon + ' ' + role.name + ' · Relevamiento completado';
+  document.getElementById('r-cumple').textContent = counts.cumple;
+  document.getElementById('r-proceso').textContent = counts.proceso;
+  document.getElementById('r-nocumple').textContent = counts.nocumple;
+  document.getElementById('r-na').textContent = counts.na;
+
+  const total = qs.length - counts.na;
+  const pct = total > 0 ? Math.round((counts.cumple / total) * 100) : 0;
+  document.getElementById('r-title').textContent = pct >= 70 ? `Operación con base sólida (${pct}%)` : pct >= 40 ? `Operación en desarrollo (${pct}%)` : `Operación con brechas críticas (${pct}%)`;
+  document.getElementById('r-sub').textContent = `${counts.cumple} de ${total} ítems evaluados cumplen el estándar. ${counts.nocumple} brechas identificadas, ${counts.proceso} en proceso de mejora.`;
+
+  const buildList = (key, color) => qs.map((q, i) => answers[i] === key
+    ? `<div class="finding-item"><div class="finding-dot" style="background:${color}"></div><div><div class="finding-text">${q.text}</div><div class="finding-cat">${q.cat}</div></div></div>` : '').join('');
+
+  const gapsHtml = buildList('nocumple', 'var(--red)');
+  const procesoHtml = buildList('proceso', 'var(--gold)');
+  const okHtml = buildList('cumple', 'var(--green)');
+
+  document.getElementById('r-gaps').innerHTML = gapsHtml || '<div class="finding-item"><div class="finding-dot" style="background:var(--green)"></div><div class="finding-text">Sin brechas críticas identificadas.</div></div>';
+  document.getElementById('r-proceso-list').innerHTML = procesoHtml || '<div class="finding-item"><div class="finding-dot" style="background:var(--muted)"></div><div class="finding-text">Sin ítems en proceso.</div></div>';
+  document.getElementById('r-ok-list').innerHTML = okHtml || '<div class="finding-item"><div class="finding-dot" style="background:var(--muted)"></div><div class="finding-text">Sin ítems que cumplan completamente.</div></div>';
+
+  // WhatsApp
+  const gaps = qs.filter((_, i) => answers[i] === 'nocumple').map(q => '• ' + q.text).slice(0,5).join('\n');
+  const waText = encodeURIComponent(
+    `Hola Gabriel, acabo de hacer el Relevamiento Operativo de Feel The Data.\n\n` +
+    `Área evaluada: ${role.name}\n` +
+    `Cumple: ${counts.cumple} | En proceso: ${counts.proceso} | No cumple: ${counts.nocumple}\n\n` +
+    (gaps ? `Principales brechas:\n${gaps}\n\n` : '') +
+    `Me gustaría hablar sobre cómo trabajar estas brechas.`
+  );
+  document.getElementById('r-wa').href = `https://wa.me/51932900134?text=${waText}`;
+
+  document.getElementById('progress-bar').style.width = '100%';
+  show('screen-results');
+}
+
+function restart() {
+  selectedRole = null;
+  answers = {};
+  currentPage = 0;
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('progress-bar').style.width = '0%';
+  show('screen-cover');
+}
+</script>
+
+</body>
+</html>
