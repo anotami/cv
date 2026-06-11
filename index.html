@@ -5,6 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gabriel Pizarro García — CX · WFM · IA Aplicada</title>
   <meta name="description" content="Ejecutivo con 20+ años liderando operaciones de atención al cliente en telcos y BPOs. Especialista en CX de escala, Workforce Management e Inteligencia Artificial aplicada a operaciones." />
+  <link rel="canonical" href="https://www.gabrielpizarro.com/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090e1a'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='30' font-weight='800' fill='%232563eb' text-anchor='middle'%3EGP%3C/text%3E%3C/svg%3E" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://www.gabrielpizarro.com/" />
+  <meta property="og:title" content="Gabriel Pizarro García — CX · WFM · IA Aplicada" />
+  <meta property="og:description" content="Ejecutivo con 20+ años liderando operaciones de atención al cliente en telcos y BPOs. Dirección de CX, transformación digital e IA aplicada." />
+  <meta property="og:image" content="https://www.gabrielpizarro.com/gabriel.jpeg" />
+  <meta property="og:locale" content="es_PE" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Gabriel Pizarro García — CX · WFM · IA Aplicada" />
+  <meta name="twitter:description" content="Ejecutivo con 20+ años liderando operaciones de atención al cliente en telcos y BPOs." />
+  <meta name="twitter:image" content="https://www.gabrielpizarro.com/gabriel.jpeg" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Gabriel Pizarro García",
+    "url": "https://www.gabrielpizarro.com/",
+    "image": "https://www.gabrielpizarro.com/gabriel.jpeg",
+    "jobTitle": "Ejecutivo de Customer Experience y Transformación Digital",
+    "worksFor": { "@type": "Organization", "name": "Feel The Data" },
+    "knowsAbout": ["Customer Experience", "Workforce Management", "Inteligencia Artificial aplicada", "Contact Centers", "Transformación Digital"],
+    "address": { "@type": "PostalAddress", "addressLocality": "Lima", "addressCountry": "PE" }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -523,6 +548,12 @@
       .nav-links { display: none; }
       .hero-meta { gap: 24px; }
       .edu-card.featured { grid-column: span 1; }
+      .projects-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .scheduler { padding: 20px; }
+      .sched-slots { grid-template-columns: repeat(2, 1fr); }
+      .sched-day { font-size: 12px; }
     }
   </style>
 </head>
@@ -592,7 +623,7 @@
       </div>
       </div><!-- /hero-text -->
       <div class="hero-photo">
-        <img src="gabriel.jpeg" alt="Gabriel Pizarro García" />
+        <img src="gabriel.jpeg" alt="Gabriel Pizarro García" width="380" height="460" fetchpriority="high" />
       </div>
     </div>
   </div>
@@ -1474,9 +1505,9 @@
         <!-- Paso 1: Calendario -->
         <div class="sched-step" id="step-calendar">
           <div class="sched-header">
-            <button class="sched-nav" id="prev-month">&#8249;</button>
+            <button class="sched-nav" id="prev-month" aria-label="Mes anterior">&#8249;</button>
             <span class="sched-month-label" id="month-label"></span>
-            <button class="sched-nav" id="next-month">&#8250;</button>
+            <button class="sched-nav" id="next-month" aria-label="Mes siguiente">&#8250;</button>
           </div>
           <div class="sched-weekdays">
             <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
@@ -1578,21 +1609,21 @@
       <form onsubmit="handleSubmit(event)">
         <div class="form-row">
           <div class="form-group">
-            <label>Nombre</label>
-            <input type="text" placeholder="Tu nombre" required />
+            <label for="c-name">Nombre</label>
+            <input type="text" id="c-name" placeholder="Tu nombre" required />
           </div>
           <div class="form-group">
-            <label>Empresa</label>
-            <input type="text" placeholder="Tu empresa" />
+            <label for="c-company">Empresa</label>
+            <input type="text" id="c-company" placeholder="Tu empresa" />
           </div>
         </div>
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" placeholder="tu@email.com" required />
+          <label for="c-email">Email</label>
+          <input type="email" id="c-email" placeholder="tu@email.com" required />
         </div>
         <div class="form-group">
-          <label>Motivo de contacto</label>
-          <select>
+          <label for="c-reason">Motivo de contacto</label>
+          <select id="c-reason">
             <option value="">Seleccionar...</option>
             <option>Oportunidad ejecutiva</option>
             <option>Consultoría Feel The Data</option>
@@ -1601,8 +1632,8 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Mensaje</label>
-          <textarea rows="4" placeholder="Cuéntame en qué puedo ayudarte..."></textarea>
+          <label for="c-message">Mensaje</label>
+          <textarea rows="4" id="c-message" placeholder="Cuéntame en qué puedo ayudarte..." required></textarea>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Enviar mensaje</button>
       </form>
@@ -1636,6 +1667,20 @@
 
   function handleSubmit(e) {
     e.preventDefault();
+    const name    = document.getElementById('c-name').value.trim();
+    const company = document.getElementById('c-company').value.trim();
+    const email   = document.getElementById('c-email').value.trim();
+    const reason  = document.getElementById('c-reason').value;
+    const message = document.getElementById('c-message').value.trim();
+    const waText = encodeURIComponent(
+      `Hola Gabriel, te escribo desde tu web.\n\n` +
+      `Nombre: ${name}\n` +
+      (company ? `Empresa: ${company}\n` : '') +
+      `Email: ${email}\n` +
+      (reason ? `Motivo: ${reason}\n` : '') +
+      `\n${message}`
+    );
+    window.open(`https://wa.me/51932900134?text=${waText}`, '_blank', 'noopener');
     const btn = e.target.querySelector('button[type="submit"]');
     btn.textContent = 'Mensaje enviado ✓';
     btn.style.background = 'var(--green)';
@@ -1654,7 +1699,6 @@
 <!-- ── Scheduler JS ── -->
 <script>
 (function () {
-  const HOST_EMAIL = 'gabriel.pizarro.garcia@gmail.com';
   const AVAILABLE_DAYS = [1, 2, 3, 4, 5]; // Lun–Vie (0=Dom)
   const TIME_SLOTS = [
     '09:00','09:30','10:00','10:30','11:00','11:30',
@@ -1773,19 +1817,6 @@
     const date = new Date(y, m-1, d);
     const dateLabel = DAYS_ES[date.getDay()] + ' ' + d + ' de ' + MONTHS_ES[m-1] + ' ' + y;
 
-    const subject = encodeURIComponent(
-      `Solicitud de reunión — ${dateLabel} ${selectedTime} hs — ${name}`
-    );
-    const body = encodeURIComponent(
-      `Hola Gabriel,\n\nQuiero solicitar una reunión con vos.\n\n` +
-      `Fecha: ${dateLabel}\nHorario: ${selectedTime} hs (Lima, PET)\n\n` +
-      `Nombre: ${name}\nEmail: ${email}\n` +
-      (company ? `Empresa: ${company}\n` : '') +
-      `Motivo: ${reason}\n` +
-      (message ? `\nMensaje:\n${message}\n` : '') +
-      `\nQuedo a tu disposición para confirmar.\n\nSaludos,\n${name}`
-    );
-
     const waNumber = '51932900134';
     const waText = encodeURIComponent(
       `Hola Gabriel, quiero solicitar una reunión 📅\n\n` +
@@ -1801,6 +1832,9 @@
       `${dateLabel} · ${selectedTime} hs · ${reason}`;
     showStep('confirm');
     document.getElementById('booking-form').reset();
+    selectedDate = null;
+    selectedTime = null;
+    renderCalendar();
   }
 
   document.addEventListener('DOMContentLoaded', init);
