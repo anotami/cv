@@ -54,6 +54,29 @@
       --sans:        'Inter', sans-serif;
       --max:         1100px;
       --r:           10px;
+      --nav-bg:      rgba(10,14,26,0.88);
+      --card-bg:     rgba(255,255,255,0.03);
+      --shadow:      0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    /* ── Light mode ── */
+    body.light {
+      --bg:          #f5f7fa;
+      --bg2:         #edf0f5;
+      --bg3:         #e4e9f2;
+      --border:      #d0d9e8;
+      --border2:     #b8c5d9;
+      --accent:      #1a4cc2;
+      --accent2:     #1d58d8;
+      --accent-glow: rgba(26,76,194,0.12);
+      --green:       #057a55;
+      --amber:       #b45309;
+      --text:        #0f1724;
+      --text2:       #374151;
+      --text3:       #6b7280;
+      --nav-bg:      rgba(245,247,250,0.92);
+      --card-bg:     rgba(255,255,255,0.8);
+      --shadow:      0 4px 24px rgba(0,0,0,0.08);
     }
 
     html { scroll-behavior: smooth; }
@@ -69,9 +92,30 @@
     /* ── Nav ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(10,14,26,0.88); backdrop-filter: blur(16px);
+      background: var(--nav-bg); backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
+      transition: background .3s;
     }
+
+    /* ── Theme toggle button ── */
+    .theme-toggle {
+      width: 38px; height: 22px; border-radius: 11px; border: none; cursor: pointer;
+      background: var(--border2); position: relative; transition: background .3s; flex-shrink: 0;
+      display: flex; align-items: center; padding: 3px;
+    }
+    .theme-toggle::after {
+      content: ''; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--text2); transition: transform .25s, background .3s;
+      display: block;
+    }
+    body.light .theme-toggle { background: var(--accent); }
+    body.light .theme-toggle::after { transform: translateX(16px); background: #fff; }
+    .theme-toggle-wrap {
+      display: flex; align-items: center; gap: 8px; margin-left: 16px;
+    }
+    .theme-toggle-icon { font-size: 14px; line-height: 1; user-select: none; }
+    body:not(.light) .icon-sun { opacity: .35; }
+    body.light .icon-moon { opacity: .35; }
     .nav-inner {
       max-width: var(--max); margin: 0 auto; padding: 0 24px;
       display: flex; align-items: center; justify-content: space-between; height: 64px;
@@ -555,6 +599,42 @@
       .sched-slots { grid-template-columns: repeat(2, 1fr); }
       .sched-day { font-size: 12px; }
     }
+
+    /* ── Light mode: section backgrounds ── */
+    body.light section { background: var(--bg); }
+    body.light section:nth-child(even) { background: var(--bg2); }
+    body.light .timeline-item,
+    body.light .project-card,
+    body.light .ref-card,
+    body.light .edu-card,
+    body.light .cert-card,
+    body.light .honor-card,
+    body.light .article-card,
+    body.light .ftd-service,
+    body.light .skill-card,
+    body.light .impact-card,
+    body.light .scheduler,
+    body.light .contact-info,
+    body.light .sched-day:not(.disabled):not(.selected),
+    body.light .sched-slot:not(.selected),
+    body.light .sched-field input,
+    body.light .sched-field select,
+    body.light .sched-field textarea,
+    body.light .form-group input,
+    body.light .form-group select,
+    body.light .form-group textarea { background: var(--card-bg); border-color: var(--border); color: var(--text); }
+    body.light .hero-stat .num { color: var(--accent); }
+    body.light .section-label { color: var(--accent2); }
+    body.light .job-company a,
+    body.light .job-company { color: var(--accent2); }
+    body.light .tag { background: var(--bg3); color: var(--text2); border-color: var(--border2); }
+    body.light .nav-cta { background: var(--accent); color: #fff; }
+    body.light .hero-badge { background: var(--bg3); border-color: var(--border2); color: var(--text2); }
+    body.light .btn-primary { background: var(--accent); color: #fff; }
+    body.light .btn-secondary { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+    body.light footer { background: var(--bg2); }
+    body.light .wa-float { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    body, body.light { transition: background .3s, color .3s; }
   </style>
 </head>
 <body>
@@ -573,6 +653,11 @@
       <li><a href="#agendar">Agendar</a></li>
       <li><a href="#contact" class="nav-cta">Contacto</a></li>
     </ul>
+    <div class="theme-toggle-wrap" title="Cambiar modo claro / oscuro">
+      <span class="theme-toggle-icon icon-moon">🌙</span>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema"></button>
+      <span class="theme-toggle-icon icon-sun">☀️</span>
+    </div>
   </div>
 </nav>
 
@@ -1671,6 +1756,18 @@
 
 <script>
   document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  // ── Theme toggle ──
+  (function() {
+    const btn = document.getElementById('theme-toggle');
+    const saved = localStorage.getItem('gpTheme');
+    if (saved === 'light') document.body.classList.add('light');
+
+    btn.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light');
+      localStorage.setItem('gpTheme', isLight ? 'light' : 'dark');
+    });
+  })();
 </script>
 
 <!-- Analytics: reemplazá G-XXXXXXXXXX con tu ID de Google Analytics 4 -->
