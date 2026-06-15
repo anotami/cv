@@ -1761,7 +1761,7 @@
   (function() {
     const btn = document.getElementById('theme-toggle');
     const saved = localStorage.getItem('gpTheme');
-    if (saved === 'light') document.body.classList.add('light');
+    if (saved !== 'dark') document.body.classList.add('light');
 
     btn.addEventListener('click', () => {
       const isLight = document.body.classList.toggle('light');
